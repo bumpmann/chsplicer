@@ -1,0 +1,19 @@
+{
+    "name": "Destiny solo training",
+    "output": "Trainings/Galneryus - Destiny solo",
+    "songs": {
+        "path": "Angevil Hero IV/Galneryus - Destiny",
+        "sampling": 44100
+    },
+    "start_blank": 8,
+    "samples_offset": -20,
+    "parts": [
+        {"start": "Guitar Solo 3", "end": 146304, "repeat": 5},
+        {"start": 146304, "end": 147840, "repeat": 5},
+        {"start": 147840, "end": 149376, "repeat": 5},
+        {"start": 149376, "end": 150912, "repeat": 5},
+        {"start": 150912, "end": 154752, "repeat": 5},
+        {"start": 154752, "end": "Guitar Solo 4", "repeat": 15},
+        {"start": "Guitar Solo 4" , "end": "Main Riff 3"}
+    ]
+}
