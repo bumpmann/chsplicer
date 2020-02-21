@@ -11,14 +11,12 @@ Installation
 Usage
 -----
 
-```
     chsplicer run examples/destiny.json
-```
 
 Prerequisites
 -------------
 
-#### ffmpeg and ffprobe
+#### ffmpeg
 
 chsplicer requires ffmpeg to work.
 
@@ -27,6 +25,13 @@ If the `FFMPEG_PATH` environment variable is set, chsplicer will use it as the f
 **Windows users**: most probably ffmpeg will _not_ be in your `%PATH`, so you _must_ set `%FFMPEG_PATH`
 
 **Debian/Ubuntu users**: the official repositories have the ffmpeg executable in the `libav-tools` package, and they are actually rebranded avconv/avprobe executables (avconv is a fork of ffmpeg).  They should be mostly compatible, but should you encounter any issue, you may want to use the real ffmpeg instead. You can either compile it from source or find a pre-built .deb package at https://ffmpeg.org/download.html (For Ubuntu, the `ppa:mc3man/trusty-media` PPA provides recent builds).
+
+Current limitations
+-----
+
+- This only supports chart format, not mid or dat.
+- When mixing songs, the chart must have the same resolution, and have the same number of instruments
+- I did not test to mix songs with different sampling
 
 
 License

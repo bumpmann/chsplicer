@@ -1,6 +1,6 @@
 {
   "name": "chsplicer",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "song splicer / customizer for clone hero. This can pick any parts, make loops and so on for godlike trainings",
   "main": "dist/app.js",
   "bin": {
@@ -19,6 +19,7 @@
   },
   "repository": "git://github.com/bumpmann/chsplicer.git",
   "license": "MIT",
+  "keywords": ["clone-hero", "clonehero", "chart"],
   "dependencies": {
     "args": "^5.0.1",
     "fluent-ffmpeg": "^2.1.2",

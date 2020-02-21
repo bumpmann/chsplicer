@@ -72,7 +72,7 @@ export class Splicer
         }
 
         await fse.ensureDir(output);
-        layout.songs.forEach(async (song, index) =>
+        for (let [index, song] of layout.songs.entries())
         {
             await fse.copy(Config.local.songPath + "/" + song.path, output, {
                 overwrite: index == 0,
@@ -80,12 +80,13 @@ export class Splicer
                     return ! this.audio.isAudioPath(dest)
                         && _path.extname(dest) != '.dat'
                         && [
+                            _path.normalize(_path.resolve(output + "/notes.mid")),
                             _path.normalize(_path.resolve(output + "/notes.chart")),
                             _path.normalize(_path.resolve(output + "/song.ini"))
                         ].indexOf(_path.normalize(_path.resolve(dest))) == -1;
                 }
             });
-        });
+        }
 
         await Promise.all([
             await this.audio.save(),
