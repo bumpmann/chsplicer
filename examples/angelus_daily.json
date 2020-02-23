@@ -1,0 +1,21 @@
+{
+    "name": "My daily power metal",
+    "output": "Trainings/My daily power metal",
+    "songs": {
+        "destiny": "chorus:d3cfc782368b0d9c70e3369c4a312e1f",
+        "grave": "chorus:3fa595dbce8342ebec8ccc6d59f63b7a",
+        "fire": "chorus:e7fa8e10bb630693e6017a80749ab035",
+        "lament": "chorus:b53385b01e8bbc5975d6381ccfadd568"
+    },
+    "parts": [
+        {"song": "grave", "start": "Intro", "end": "Chorus 1", "event": "Sinergy - I Spit On Your Grave"},
+        {"song": "grave", "start": "Verse 1", "end": "Chorus 2"},
+        {"song": "grave", "start": "Guitar Solo 1b", "end": "Break"},
+        {"song": "grave", "start": "Guitar Solo 2b", "end": "Chorus 3"},
+        {"song": "grave", "start": 132864, "end": "End"},
+        {"song": "fire", "start": "Guitar Solo 2", "end": 15552, "event": "Stratovarius - Fire Dance"},
+        {"song": "fire", "start": "Guitar Solo 3", "end": 48192},
+        {"song": "lament", "start": "synth solo a", "end": "guitar solo a", "event": "Galneryus - Lament"},
+        {"song": "destiny", "start": "Guitar Solo 3", "end": "Main Riff 3", "event": "Galneryus - Destiny"}
+    ]
+}

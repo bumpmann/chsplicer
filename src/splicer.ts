@@ -1,10 +1,11 @@
-import { ChartIO, Chart } from 'herochartio'
+import { ChartIO, Chart, ChartEvent, ChartTrack } from 'herochartio'
 import { Config } from "./config";
 import * as fse from 'fs-extra';
 import * as ini from 'ini';
 import * as _path from 'path';
 import { Layout } from './layout';
-import { Audio, AudioVoice } from './audio';
+import { Audio } from './audio';
+import { AudioVoice } from "./audioVoice";
 
 export class Splicer
 {
@@ -30,17 +31,20 @@ export class Splicer
 
         this.audio = new Audio();
         let audioOuputs: {[name:string]: AudioVoice} = {};
-        let audioInputs = await Promise.all(layout.songs.map(song => this.audio.scanVoices(Config.local.songPath + "/" + song.path)));
-        audioInputs.forEach((inputs, index) =>
+        let audioInputs = await Promise.all(layout.songs.map(song => this.audio.scanVoices(song.fullpath)));
+        for (let [index, inputs] of audioInputs.entries())
         {
+            let song = layout.songs[index];
             for (let input of inputs)
             {
                 let voiceName = input.substr(0, input.length - _path.extname(input).length);
-                if (!audioOuputs[voiceName])
-                    audioOuputs[voiceName] = this.audio.addVoice(output + "/" + voiceName + ".ogg");
-                audioOuputs[voiceName].addInput(Config.local.songPath + "/" + layout.songs[index].path + "/" + input);
+                let voice = audioOuputs[voiceName];
+                let inputFile = song.fullpath + "/" + voiceName;
+                if (!voice)
+                    voice = audioOuputs[voiceName] = this.audio.addVoice(output + "/" + voiceName + ".ogg");
+                await voice.addInput(index, inputFile);
             }
-        });
+        }
         this.audio.setDelay(layout.start_blank * (60000 / firstBps), layout.samples_offset);
 
         if (audioOuputs["song"]) newChart.Song.MusicStream = _path.basename(audioOuputs["song"].output);
@@ -50,11 +54,23 @@ export class Splicer
         if (audioOuputs["drum"]) newChart.Song.DrumStream = _path.basename(audioOuputs["drum"].output);
 
         let time = layout.infos.Resolution * layout.start_blank;
+        let events: ChartTrack<ChartEvent> = {};
         for (let part of layout.parts)
         {
             let chart = part.song.chart;
             let startPts = Math.round(chart.positionToSeconds(part.start) * part.song.sampling);
             let endPts = Math.round(chart.positionToSeconds(part.end) * part.song.sampling) - 1;
+/*
+            let startsec = chart.positionToSeconds(part.start);
+            let endsec = chart.positionToSeconds(part.end);
+            console.log("end", {
+                name: part.end, song:part.song.id,
+                st: Math.floor(startsec / 60) + ":" + (startsec - Math.floor(startsec / 60) * 60),
+                end: Math.floor(endsec / 60) + ":" + (endsec - Math.floor(endsec / 60) * 60)
+            })*/
+
+            if (part.event)
+                events[time] = [{ type:"E", name: "section " + part.event }];
 
             let partChart = chart.filterPositions(pos => pos >= part.start && pos < part.end);
 
@@ -70,11 +86,12 @@ export class Splicer
                 time += part.end - part.start;
             }
         }
+        newChart.Events = events;
 
         await fse.ensureDir(output);
         for (let [index, song] of layout.songs.entries())
         {
-            await fse.copy(Config.local.songPath + "/" + song.path, output, {
+            await fse.copy(song.fullpath, output, {
                 overwrite: index == 0,
                 filter: (src: string, dest: string) => {
                     return ! this.audio.isAudioPath(dest)

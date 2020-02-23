@@ -1,6 +1,8 @@
 src/
 test/
 lib/ffmpeg.exe
+cache/
+temp/
 *.md
 .git*
 config.json

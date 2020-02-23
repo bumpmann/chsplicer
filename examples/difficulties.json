@@ -1,0 +1,19 @@
+{
+    "name": "0 - My daily training",
+    "output": "Trainings/My daily training",
+    "songs": {
+        "destiny": "chorus:d3cfc782368b0d9c70e3369c4a312e1f",
+        "dragon": "special\\way too much fucking god damn dragonforce like jesus christ 2.0 special edition for rhythmfag"
+    },
+    "parts": [
+        {"song": "dragon", "start": 4971779, "end": 4976579},
+        {"song": "dragon", "start": 4976579, "end": 4995779, "repeat": 2},
+        {"start": "Guitar Solo 3", "end": 146304, "repeat": 2},
+        {"start": 146304, "end": 147840, "repeat": 2},
+        {"start": 147840, "end": 149376, "repeat": 2},
+        {"start": 149376, "end": 150912, "repeat": 2},
+        {"start": 150912, "end": 154752, "repeat": 2},
+        {"start": 154752, "end": "Guitar Solo 4", "repeat": 2},
+        {"start": "Guitar Solo 4" , "end": "Main Riff 3"}
+    ]
+}

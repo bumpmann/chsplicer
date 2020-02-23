@@ -10,6 +10,8 @@ export class Config {
 	static local: LocalConfig;
 	static bin_dir = __dirname + "/../lib";
 	static config_path = __dirname + "/../config.json";
+	static cache_path = __dirname + "/../cache";
+	static temp_path = __dirname + "/../temp";
 
 	static async loadConfig()
 	{

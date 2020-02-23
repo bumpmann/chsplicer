@@ -30,8 +30,8 @@ Current limitations
 -----
 
 - This only supports chart format, not mid or dat.
-- When mixing songs, the chart must have the same resolution, and have the same number of instruments
 - I did not test to mix songs with different sampling
+- This only uses expert track
 
 
 License

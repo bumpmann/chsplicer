@@ -8,7 +8,7 @@
   },
   "scripts": {
     "prepublishOnly": "npm run build",
-    "start": "node_modules/.bin/tsc-watch -p . --onSuccess \"node ./dist/app.js run ./examples/dragonforce_mix.json\" --onFailure \"echo Beep! Compilation Failed\"",
+    "start": "node_modules/.bin/tsc-watch -p . --onSuccess \"node ./dist/app.js run ./examples/angelus_daily.json\" --onFailure \"echo Beep! Compilation Failed\"",
     "build": "tsc -p .",
     "test": "npm i -g && chsplicer run ./examples/destiny.json"
   },
@@ -19,19 +19,30 @@
   },
   "repository": "git://github.com/bumpmann/chsplicer.git",
   "license": "MIT",
-  "keywords": ["clone-hero", "clonehero", "chart"],
+  "keywords": [
+    "clone-hero",
+    "clonehero",
+    "chart"
+  ],
   "dependencies": {
     "args": "^5.0.1",
+    "extract-zip": "^1.6.7",
     "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "8.1.0",
     "herochartio": "^1.0.0",
-    "ini": "^1.3.5"
+    "ini": "^1.3.5",
+    "music-metadata": "^6.3.4",
+    "needle": "^2.3.2",
+    "sanitize-filename": "^1.6.3",
+    "unrar-promise": "^2.0.1"
   },
   "devDependencies": {
     "@types/args": "^3.0.0",
+    "@types/extract-zip": "^1.6.2",
     "@types/fluent-ffmpeg": "^2.1.14",
     "@types/fs-extra": "8.0.1",
     "@types/ini": "^1.3.30",
+    "@types/needle": "^2.0.4",
     "@types/node": "12.12.5",
     "tsc-watch": "^4.0.0",
     "typescript": "3.6.4"

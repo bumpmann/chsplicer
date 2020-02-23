@@ -1,29 +1,17 @@
 {
     "name": "Dragonforce mix",
     "output": "Trainings/Dragonforce mix",
-    "songs": [{
-        "id": "hoot",
-        "path": "games\\gh3 official dlc\\dlc80",
-        "sampling": 44100
-    },{
-        "id": "ogap",
-        "path": "games\\gh3 official dlc\\dlc81",
-        "sampling": 44100
-    },{
-        "id": "rd",
-        "path": "games\\gh3 official dlc\\dlc82",
-        "sampling": 44100
-    },{
-        "id": "ttff",
-        "path": "guitar hero iii - bonus\\dragonforce - through the fire & flames",
-        "sampling": 44100
-    }],
-    "start_blank": 8,
+    "songs": {
+        "hoot": "games\\gh3 official dlc\\dlc80",
+        "ogap": "games\\gh3 official dlc\\dlc81",
+        "rd": "games\\gh3 official dlc\\dlc82",
+        "ttff": "guitar hero iii - bonus\\dragonforce - through the fire & flames"
+    },
     "samples_offset": -20,
     "parts": [
-        {"song": "ttff", "start": "herman's_solo", "end": "sam's_solo"},
-        {"song": "hoot", "start": 378240, "end": 405121},
-        {"song": "ogap", "start": 124800, "end": 147840},
-        {"song": "rd", "start": 357122, "end": 372480}
+        {"song": "ttff", "start": "herman's_solo", "end": "sam's_solo", "event": "ttff"},
+        {"song": "hoot", "start": 378240, "end": 405121, "event": "hoot"},
+        {"song": "ogap", "start": 124800, "end": 147840, "event": "ogap"},
+        {"song": "rd", "start": 357122, "end": 372480, "event": "rd"}
     ]
 }
