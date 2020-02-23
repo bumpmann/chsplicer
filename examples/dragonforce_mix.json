@@ -2,15 +2,15 @@
     "name": "Dragonforce mix",
     "output": "Trainings/Dragonforce mix",
     "songs": {
-        "hoot": "games\\gh3 official dlc\\dlc80",
-        "ogap": "games\\gh3 official dlc\\dlc81",
-        "rd": "games\\gh3 official dlc\\dlc82",
-        "ttff": "guitar hero iii - bonus\\dragonforce - through the fire & flames"
+        "hoot": "chorus:3ada9ff99d557abb11b4ee02742b9c43",
+        "ogap": "chorus:6f0229e7af7d834bce0e54c11085557e",
+        "rd": "chorus:5c206fdc6671dab9f5da81b8df36d972",
+        "ttff": "chorus:79080f226eb5c369ee2502e4788f6725"
     },
     "samples_offset": -20,
     "parts": [
         {"song": "ttff", "start": "herman's_solo", "end": "sam's_solo", "event": "ttff"},
-        {"song": "hoot", "start": 378240, "end": 405121, "event": "hoot"},
+        {"song": "hoot", "start": 378240, "end": 405120, "event": "hoot"},
         {"song": "ogap", "start": 124800, "end": 147840, "event": "ogap"},
         {"song": "rd", "start": 357122, "end": 372480, "event": "rd"}
     ]

@@ -1,6 +1,7 @@
 import * as needle from 'needle';
 import * as fse from 'fs-extra';
-import * as path from 'path';
+import * as _path from 'path';
+import * as _url from 'url';
 import * as extract_zip from 'extract-zip';
 import { EventEmitter } from 'events';
 import { Config } from './config';
@@ -20,27 +21,6 @@ export enum DownloadState {
 	transfer,
 	transferFailed,
 	finished
-}
-
-export class ChorusDownloader
-{
-	async download(md5: string): Promise<string>
-	{
-		let folderName = Downloader.sanitizeFilename(md5);
-		let destination = path.join(Config.cache_path, folderName);
-
-		if (await fse.pathExists(destination))
-			return destination;
-
-		let resp = await needle('get', 'https://chorus.fightthe.pw/api/search?query=md5%3D' + md5);
-		let directLinks = resp.body.songs[0].directLinks;
-		console.log(`Downloading ${resp.body.songs[0].name} - ${resp.body.songs[0].artist} (${resp.body.songs[0].charter})`);
-		for (let linkType in directLinks)
-		{
-			let dl = await Downloader.download(directLinks[linkType], linkType == 'archive', md5);
-		}
-		return destination;
-	}
 }
 
 export class Downloader extends EventEmitter {
@@ -81,8 +61,8 @@ export class Downloader extends EventEmitter {
 		this.isArchive = isArchive;
 
 		folderName = Downloader.sanitizeFilename(folderName);
-		this.tempFolder = path.join(Config.temp_path, folderName)
-		this.destination = path.join(Config.cache_path, folderName);
+		this.tempFolder = _path.join(Config.temp_path, folderName)
+		this.destination = _path.join(Config.cache_path, folderName);
 	}
 
 	private start(cookieHeader?: string) {
@@ -144,7 +124,7 @@ export class Downloader extends EventEmitter {
 	private async handleDownloadResponse(headers: Headers) {
 		await fse.ensureDir(this.tempFolder);
 
-		const filePath = path.join(this.tempFolder, this.fileName);
+		const filePath = _path.join(this.tempFolder, this.fileName);
 		this.req.pipe(fse.createWriteStream(filePath));
 
 		this.req.on('data', chunk => {
@@ -168,27 +148,39 @@ export class Downloader extends EventEmitter {
 	private getDownloadFileName(url: string, headers: any) {
 		if (headers['server'] && headers['server'] === 'cloudflare') {
 			// Cloudflare specific jazz
-			return Downloader.sanitizeFilename(decodeURIComponent(path.basename(url)));
+			return Downloader.sanitizeFilename(decodeURIComponent(_path.basename(url)));
 		}
 
 		// GDrive specific jazz
 		const filenameRegex = /filename="(.*?)"/g;
 		let results = filenameRegex.exec(headers['content-disposition']);
-		if (results == null) {
-			console.log(`Warning: couldn't find filename in content-disposition header: [${headers['content-disposition']}]`);
-			return 'unknownFilename';
+		if (results) {
+			return Downloader.sanitizeFilename(results[1]);
 		}
 
-		return Downloader.sanitizeFilename(results[1]);
+		let ext = "";
+		if (headers['content-type'] == 'application/zip')
+			ext = ".zip";
+		let filename = decodeURIComponent(_path.basename(_url.parse(this.url).pathname || ""));
+		if (!filename)
+		{
+			console.log(`Warning: couldn't find suitable filename`);
+			return 'unknownFilename' + ext;
+		}
+
+		if (!_path.extname(filename))
+			filename += ext;
+
+		return Downloader.sanitizeFilename(filename);
 	}
 
 	private async extractDownload()
 	{
-		const source = path.join(this.tempFolder, this.fileName);
+		const source = _path.join(this.tempFolder, this.fileName);
 
 		try
 		{
-			if (path.extname(this.fileName).toLowerCase() == ".rar")
+			if (_path.extname(this.fileName).toLowerCase() == ".rar")
 				await unrar(source, this.tempFolder);
 			else
 				await extract(source, { dir: this.tempFolder });
@@ -207,15 +199,15 @@ export class Downloader extends EventEmitter {
 			let files = (this.isArchive ? await fse.readdir(this.tempFolder) : [this.fileName]);
 
 			// If the chart folder is in the archive folder, rather than the chart files
-			const isFolderArchive = (files.length < 2 && !fse.lstatSync(path.join(this.tempFolder, files[0])).isFile());
+			const isFolderArchive = (files.length < 2 && !fse.lstatSync(_path.join(this.tempFolder, files[0])).isFile());
 			if (this.isArchive && isFolderArchive) {
-				this.tempFolder = path.join(this.tempFolder, files[0]);
+				this.tempFolder = _path.join(this.tempFolder, files[0]);
 				files = await fse.readdir(this.tempFolder);
 			}
 
 			// Copy the files from the temporary directory to the destination
 			for (const file of files) {
-				await fse.move(path.join(this.tempFolder, file), path.join(this.destination, file));
+				await fse.move(_path.join(this.tempFolder, file), _path.join(this.destination, file));
 			}
 
 			// Delete the extracted folder from the temporary directory

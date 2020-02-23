@@ -3,6 +3,11 @@ Node.js: chsplicer
 
 `chsplicer` a song splicer / customizer for clone hero. This can pick any parts, make loops and so on for godlike trainings.
 
+You can point source songs from:
+ - a relative path from clone hero song folder
+ - a song on chorus by its md5 (this will download the song).
+ - an url of a song archive (zip / rar)
+
 Installation
 ------------
 
@@ -11,7 +16,9 @@ Installation
 Usage
 -----
 
-    chsplicer run examples/destiny.json
+    chsplicer run ./examples/destiny.json
+
+    chsplicer runall ./examples
 
 Prerequisites
 -------------
@@ -29,9 +36,8 @@ If the `FFMPEG_PATH` environment variable is set, chsplicer will use it as the f
 Current limitations
 -----
 
-- This only supports chart format, not mid or dat.
 - I did not test to mix songs with different sampling
-- This only uses expert track
+- This only uses expert guitar track
 
 
 License

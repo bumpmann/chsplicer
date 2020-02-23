@@ -60,14 +60,6 @@ export class Splicer
             let chart = part.song.chart;
             let startPts = Math.round(chart.positionToSeconds(part.start) * part.song.sampling);
             let endPts = Math.round(chart.positionToSeconds(part.end) * part.song.sampling) - 1;
-/*
-            let startsec = chart.positionToSeconds(part.start);
-            let endsec = chart.positionToSeconds(part.end);
-            console.log("end", {
-                name: part.end, song:part.song.id,
-                st: Math.floor(startsec / 60) + ":" + (startsec - Math.floor(startsec / 60) * 60),
-                end: Math.floor(endsec / 60) + ":" + (endsec - Math.floor(endsec / 60) * 60)
-            })*/
 
             if (part.event)
                 events[time] = [{ type:"E", name: "section " + part.event }];
@@ -95,7 +87,7 @@ export class Splicer
                 overwrite: index == 0,
                 filter: (src: string, dest: string) => {
                     return ! this.audio.isAudioPath(dest)
-                        && _path.extname(dest) != '.dat'
+                        && _path.extname(dest) != '.dat' && _path.extname(dest) != '.db'
                         && [
                             _path.normalize(_path.resolve(output + "/notes.mid")),
                             _path.normalize(_path.resolve(output + "/notes.chart")),

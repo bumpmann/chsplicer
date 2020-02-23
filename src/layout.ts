@@ -2,7 +2,9 @@ import { ChartIO, Chart, ChartSong } from 'herochartio'
 import * as fse from 'fs-extra'
 import { Config } from './config'
 import * as ini from 'ini'
-import { Downloader, ChorusDownloader } from './downloader'
+import { Downloader } from './downloader'
+import { ChorusDownloader } from "./ChorusDownloader"
+import { CachedDownloader } from './CachedDownloader'
 
 export class LayoutSong
 {
@@ -68,9 +70,11 @@ export class Layout
             song.path = objsong.path;
             if (objsong.path.substr(0,7) == 'chorus:')
                 song.fullpath = await (new ChorusDownloader().download(objsong.path.substr(7)));
+            else if (objsong.path.substr(0,4) == 'url:')
+                song.fullpath = await (new CachedDownloader().download(objsong.path.substr(4)));
             else
                 song.fullpath = `${Config.local.songPath}/${song.path}`;
-            song.chart = await ChartIO.load(`${song.fullpath}/notes.chart`);
+            song.chart = await ChartIO.load(`${song.fullpath}/notes`);
             song.sampling = objsong.sampling || 44100;
             layout.songs.push(song);
         }
