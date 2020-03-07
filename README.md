@@ -20,6 +20,43 @@ Usage
 
     chsplicer runall ./examples
 
+Format
+------
+
+```javascript
+{
+    "version": "1.0.4", // For compatibility
+    "name": "New song name",
+    "output": "Path/Relative/To/Songs",
+    "songs": { // Input songs. this also can be "song" with only one input value
+        "Destiny": "chorus:d3cfc782368b0d9c70e3369c4a312e1f", // <-- Download from chorus by the song's md5
+        "Dragonforce": "url:https://public.fightthe.pw/rehosts/randomshit/Way%20Too%20Much%20Fucking%20God%20Damn%20DragonForce%20Like%20Jesus%20Christ%202.0%20Special%20Edition%20For%20RhythmFag.zip", // <-- Download from an url
+        "Other": "Games/Skyrim/Brandon Strader - Dovahkiin" // <-- Relative to the game songs folder
+    },
+    "infos": { // optional. Will override songs infos in chart infos & songs.ini
+        "album": "custom mix",
+        "artist": "galneryus, dragonforce & Brandon Strader"
+    },
+    "copy": { // optional. Will copy files from an input song. "copy": true will copy everything possible with priority from the first song (default behaviour), "copy": false will copy nothing
+        "album.png": "Dragonforce"
+    },
+    "start_blank": 4, // optional. Starting blank beats
+    "samples_offset": -20, // optional. Audio delay in samples (e.g. -20 with 44100 sampling rate = -20 / 44100 seconds)
+    "parts": [ // parts to concat
+        {
+            "song": "Destiny", // optional. If not specified this will take the first input song.
+            "start": "Guitar Solo 3", "end": 146304, // optional. This can be an event or a chart time reference.
+            "repeat": 5, // optional. This will repeat this part several times
+            "event": "Destiny", // optional. This will add an event at the beginning of this part.
+            "startOffset": 128, "endOffset": 128, // optional. This will delay the audio start & end of the number of samples
+            "quantize": 1 // optional. This will round the start and end at a beat (1), two beats (2), half beat (0.5) etc.
+        },
+        {"song": "Dragonforce"},
+        {"song": "Other"}
+    ]
+}
+```
+
 Prerequisites
 -------------
 

@@ -9,10 +9,12 @@ export class AudioVoice
     output: string
     inputs: string[] = []
     inputsName: {[index: number]: string} = {}
+    inputsPath: {[index: number]: string} = {}
+    inputsNumberOfSamples: {[index: number]: number} = {};
     delay: number = 0
     delay_samples: number = 0
     sampling: number = 44100
-    valid_exts = ['.ogg', '.mp3']
+    valid_exts = ['.ogg', '.mp3'];
 
     private filters: ffmpeg.FilterSpecification[] = []
     private outputs: string[] = []
@@ -35,13 +37,22 @@ export class AudioVoice
             return;
 
         this.inputsName[index] = this.inputs.length + ':0';
+        this.inputsPath[index] = path;
         this.inputs.push(path);
 
-        let sampleRate = (await mm.parseFile(path)).format.sampleRate;
+        let parsedMeta = await mm.parseFile(path, { duration: true });
+
+        let numberOfSamples = parsedMeta.format.numberOfSamples;
+        if (numberOfSamples)
+        {
+            this.inputsNumberOfSamples[index] = numberOfSamples;
+        }
+
+        let sampleRate = parsedMeta.format.sampleRate;
         if (sampleRate)
         {
             if (sampleRate != this.sampling)
-                throw new Error("Audio inputs must be of same sample rate");
+                throw new Error("Audio inputs must be of same sample rate (" + path + " with " + sampleRate + ")");
             this.sampling = sampleRate;
         }
     }
@@ -50,6 +61,11 @@ export class AudioVoice
     {
         if (this.inputsName[index])
         {
+            if (endPts > this.inputsNumberOfSamples[index])
+            {
+                console.log("Required end sampling point: " + endPts + ", audio number of samples: " + this.inputsNumberOfSamples[index]);
+                throw new Error('Trying to add a note that is outside the audio range, please check end point for ' + this.inputsPath[index]);
+            }
             this.filters.push({
                 filter: 'atrim', options: {'start_pts': startPts, 'end_pts': endPts},
                 inputs: this.inputsName[index], outputs: 'trimpart' + this.outputs.length
@@ -103,7 +119,7 @@ export class AudioVoice
     private async ffmpegAsync(cmd: ffmpeg.FfmpegCommand)
     {
         if (await fse.pathExists(Config.bin_dir + "/ffmpeg") || await fse.pathExists(Config.bin_dir + "/ffmpeg.exe"))
-            cmd = cmd.setFfmpegPath(Config.bin_dir + "/ffmpeg")
+            cmd = cmd.setFfmpegPath(Config.bin_dir + "/ffmpeg").outputOption("-threads 7")
         let cmdLine = "";
         await new Promise((resolve, reject) => {
             cmd.on('start', function(commandLine) {

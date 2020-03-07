@@ -23,6 +23,9 @@ export class LayoutPart
     end: number
     repeat: number
     event: string
+    quantize: number
+    startOffset: number
+    endOffset: number
 }
 
 export class Layout
@@ -35,6 +38,7 @@ export class Layout
     samples_offset: number
     parts: LayoutPart[]
     infos: ChartSong
+    copy: boolean | {[filename: string]: LayoutSong}
 
     static async load(path: string)
     {
@@ -79,10 +83,31 @@ export class Layout
             layout.songs.push(song);
         }
 
+        if (obj.copy == undefined)
+            layout.copy = true;
+        else if (obj.copy === false)
+            layout.copy = false;
+        else
+        {
+            layout.copy = Object.fromEntries(Object.entries(obj.copy).map(ent => {
+                let song = layout.songs.find(song => song.id == ent[1]);
+                if (!song)
+                    throw new Error("Could not copy file " + ent[0] + " from unknown song " + ent[1]);
+                return [ent[0], song];
+            }));
+        }
+
         layout.parts = obj.parts.map((obj: any) => {
             let part = new LayoutPart();
             let song = obj.song ? layout.songs.find(song => song.id == obj.song) : null;
             part.song = song || layout.songs[0];
+            if (obj.start == undefined)
+                obj.start = parseInt(Object.entries(part.song.chart.ExpertSingle)[0][0]);
+            if (obj.end == undefined)
+            {
+                let entries = Object.entries(part.song.chart.ExpertSingle);
+                obj.end = parseInt(entries[entries.length - 1][0]);
+            }
             part.start = (typeof obj.start) == 'string' ? part.song.chart.findSectionPosition(obj.start) : (obj.start || 0);
             part.end = (typeof obj.end) == 'string' ? part.song.chart.findSectionPosition(obj.end) : obj.end;
             if (part.start == -1)
@@ -91,6 +116,9 @@ export class Layout
                 throw new Error(part.song.chart.Song.Name + ": could not find section " + obj.end);
             part.repeat = obj.repeat || 1;
             part.event = obj.event;
+            part.quantize = obj.quantize;
+            part.startOffset = obj.startOffset;
+            part.endOffset = obj.endOffset;
             return part;
         });
 

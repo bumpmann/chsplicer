@@ -13,7 +13,11 @@ export class Splicer
 
     async run(config: string)
     {
+        console.log("Loading config and inputs...");
+
         let layout = await Layout.load(config);
+
+        console.log("Writing new chart...")
 
         let output = Config.local.songPath + "/" + layout.output;
 
@@ -58,43 +62,70 @@ export class Splicer
         for (let part of layout.parts)
         {
             let chart = part.song.chart;
-            let startPts = Math.round(chart.positionToSeconds(part.start) * part.song.sampling);
-            let endPts = Math.round(chart.positionToSeconds(part.end) * part.song.sampling) - 1;
+
+            let partStart = part.quantize ? Math.floor(part.start / chart.Song.Resolution / part.quantize) * chart.Song.Resolution : part.start;
+            let partEnd = part.quantize ? Math.floor(part.end / chart.Song.Resolution / part.quantize) * chart.Song.Resolution : part.end;
+
+            let startPts = Math.round(chart.positionToSeconds(partStart) * part.song.sampling) + (part.startOffset||0);
+            let endPts = Math.round(chart.positionToSeconds(partEnd) * part.song.sampling) + (part.endOffset||0);
 
             if (part.event)
                 events[time] = [{ type:"E", name: "section " + part.event }];
 
-            let partChart = chart.filterPositions(pos => pos >= part.start && pos < part.end);
+            let partChart = chart.filterPositions(pos => pos >= partStart && pos < partEnd);
+            partChart.mapTrackEntries(partChart.ExpertSingle, (value, ind) => {
+                return [
+                    ind,
+                    value.map(val => {
+                        if (val.type != "N" && val.type != "S")
+                            return val;
+                        val.duration = ind + val.duration > partEnd ? partEnd - ind : val.duration;
+                        return val;
+                    })
+                ]
+            });
 
             for (let i = 0; i < part.repeat; i++)
             {
                 this.audio.concat(part.song.index, startPts, endPts);
 
-                if (newChart.bpsAt(time) != chart.bpsAt(part.start))
-                    newChart.SyncTrack = newChart.concatTrack({[time]: [{type: "B", value: chart.bpsAt(part.start)}]}, newChart.SyncTrack);
-                if (newChart.signatureAt(time) != chart.signatureAt(part.start))
-                    newChart.SyncTrack = newChart.concatTrack({[time]: [{type: "TS", value: chart.signatureAt(part.start)}]}, newChart.SyncTrack);
-                newChart = newChart.concat(partChart.mapPositions(pos => pos - part.start + time));
-                time += part.end - part.start;
+                if (newChart.bpsAt(time) != chart.bpsAt(partStart))
+                    newChart.SyncTrack = newChart.concatTrack({[time]: [{type: "B", value: chart.bpsAt(partStart)}]}, newChart.SyncTrack);
+                if (newChart.signatureAt(time) != chart.signatureAt(partStart))
+                    newChart.SyncTrack = newChart.concatTrack({[time]: [{type: "TS", value: chart.signatureAt(partStart)}]}, newChart.SyncTrack);
+                newChart = newChart.concat(partChart.mapPositions(pos => pos - partStart + time));
+                time += partEnd - partStart;
             }
         }
         newChart.Events = events;
 
+        console.log("Writing song files...");
+
         await fse.ensureDir(output);
-        for (let [index, song] of layout.songs.entries())
+
+        if (layout.copy === true)
         {
-            await fse.copy(song.fullpath, output, {
-                overwrite: index == 0,
-                filter: (src: string, dest: string) => {
-                    return ! this.audio.isAudioPath(dest)
-                        && _path.extname(dest) != '.dat' && _path.extname(dest) != '.db'
-                        && [
-                            _path.normalize(_path.resolve(output + "/notes.mid")),
-                            _path.normalize(_path.resolve(output + "/notes.chart")),
-                            _path.normalize(_path.resolve(output + "/song.ini"))
-                        ].indexOf(_path.normalize(_path.resolve(dest))) == -1;
-                }
-            });
+            for (let [index, song] of layout.songs.entries())
+            {
+                await fse.copy(song.fullpath, output, {
+                    overwrite: index == 0,
+                    filter: (src: string, dest: string) => {
+                        return ! this.audio.isAudioPath(dest)
+                            && _path.extname(dest) != '.dat' && _path.extname(dest) != '.db' && _path.extname(dest) != '.json'
+                            && [
+                                _path.normalize(_path.resolve(output + "/notes.mid")),
+                                _path.normalize(_path.resolve(output + "/notes.chart")),
+                                _path.normalize(_path.resolve(output + "/song.ini"))
+                            ].indexOf(_path.normalize(_path.resolve(dest))) == -1;
+                    }
+                });
+            }
+        } else if (layout.copy)
+        {
+            for (let [filename, song] of Object.entries(layout.copy))
+            {
+                await fse.copy(song.fullpath + "/" + filename, output + "/" + filename, { overwrite: true });
+            }
         }
 
         await Promise.all([

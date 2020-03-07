@@ -6,6 +6,7 @@ import * as extract_zip from 'extract-zip';
 import { EventEmitter } from 'events';
 import { Config } from './config';
 import * as util from 'util';
+import { NeedleOptions } from 'needle';
 const sanitize = require('sanitize-filename');
 const {unrar} = require('unrar-promise');
 
@@ -40,15 +41,31 @@ export class Downloader extends EventEmitter {
 
 	private req: NodeJS.ReadableStream
 
-	static async download(url: string, isArchive: boolean, folderid: string): Promise<Downloader>
+	static async download(url: string, isArchive: boolean, folderid: string, retry = 10): Promise<Downloader>
 	{
-		return new Promise((resolve, reject) => {
-			let dl = new Downloader(url, isArchive, folderid);
-			dl.on('error', err => reject(err || dl.errorMessage))
-				//.on('update', () => console.log(dl.state.toString()))
-				.on('end', () => resolve(dl))
-				.start();
-		});
+		let maxtry = retry;
+		while (retry > 0)
+		{
+			try {
+				return await new Promise((resolve, reject) => {
+					let dl = new Downloader(url, isArchive, folderid);
+					dl.on('error', err => reject(err || dl.errorMessage))
+						//.on('update', () => console.log(dl.state.toString()))
+						.on('end', () => resolve(dl))
+						.start();
+				});
+			}
+			catch (err)
+			{
+				if (--retry <= 0)
+					throw err;
+
+				let waittime = (maxtry - retry) * 5;
+				console.log('Will retry in ' + waittime + ' mins (still ' + retry + ' tries)');
+				await new Promise(resolve => setTimeout(resolve, waittime * 60000));
+			}
+		}
+		throw new Error();
 	}
 
 	constructor(url: string, isArchive: boolean, folderName: string)
@@ -66,15 +83,27 @@ export class Downloader extends EventEmitter {
 	}
 
 	private start(cookieHeader?: string) {
-		this.req = needle.get(this.url, {
+		let options: NeedleOptions = {
 			follow_max: 10,
 			headers: (cookieHeader ? { 'Cookie': cookieHeader } : undefined)
-		});
+		};
+		if (_url.parse(this.url).hostname == "drive.google.com")
+		{
+			if (!options.headers)
+				options.headers = {};
+			options.compressed = true;
+			options.headers['accept'] = "accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
+			options.headers['accept-encoding'] = "gzip, deflate, br";
+			options.headers['accept-language'] = "fr,en-US;q=0.9,en;q=0.8";
+			options.headers['user-agent'] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.116 Safari/537.36";
+		}
+
+		this.req = needle.get(this.url, options);
 
 		this.req.on('header', (statusCode, headers) => {
 			if (statusCode != 200) {
 				this.errorMessage = `Failed to download chart: request to [${this.url}] returned status code ${statusCode}.`;
-				this.updateState(DownloadState.failedToRespond);
+				this.handleBadResponse();
 				return;
 			}
 
@@ -82,14 +111,43 @@ export class Downloader extends EventEmitter {
 			if (this.fileType.startsWith('text/html')) {
 				// console.log('REQUEST RETURNED HTML');
 				this.handleHTMLResponse(headers['set-cookie']);
-			} else {
-				// console.log(`REQUEST RETURNED FILE DOWNLOAD (x-goog-hash=[${headers['x-goog-hash']}])`);
-				this.fileName = this.getDownloadFileName(this.url, headers);
-				this.fileType = headers['content-type'];
-				this.fileSize = headers['content-length'];
-				this.updateState(DownloadState.download);
-				this.handleDownloadResponse(headers);
+				return;
 			}
+
+			// console.log(`REQUEST RETURNED FILE DOWNLOAD (x-goog-hash=[${headers['x-goog-hash']}])`);
+			this.fileName = this.getDownloadFileName(this.url, headers);
+			if (fse.pathExistsSync(this.destination + "/" + this.fileName))
+			{
+				console.log("Skipping " + this.fileName + " download, because already been downloaded");
+				this.cancelDownload();
+				this.updateState(DownloadState.finished);
+				this.emit('end');
+				return;
+			}
+
+			this.fileType = headers['content-type'];
+			this.fileSize = headers['content-length'];
+			this.updateState(DownloadState.download);
+			this.handleDownloadResponse(headers);
+		});
+	}
+
+	private handleBadResponse()
+	{
+		let badResponseHTML = '';
+		this.req.on('data', data => badResponseHTML += data);
+		this.req.on('done', async (err) => {
+			if (badResponseHTML.indexOf("but your computer or network may be sending automated queries. To protect our users, we can't process your request right now") != -1)
+			{
+				console.log("Too much requests to google drive. Please wait few minutes and retry");
+			}
+			else
+			{
+				console.log("Wrote html response in debug.html", err);
+				await fse.writeFile("debug.html", badResponseHTML, 'utf-8');
+			}
+			this.updateState(DownloadState.failedToRespond);
+			return;
 		});
 	}
 

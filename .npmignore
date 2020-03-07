@@ -6,3 +6,4 @@ temp/
 *.md
 .git*
 config.json
+debug.html
