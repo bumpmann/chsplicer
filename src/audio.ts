@@ -32,9 +32,9 @@ export class Audio
         });
     }
 
-    concat(inputIndex: number, startPts: number, endPts: number)
+    concat(inputIndex: number, startTime: number, endTime: number)
     {
-        this.voices.forEach(voice => voice.concat(inputIndex, startPts, endPts));
+        this.voices.forEach(voice => voice.concat(inputIndex, startTime, endTime));
     }
 
     async scanVoices(path: string): Promise<string[]>

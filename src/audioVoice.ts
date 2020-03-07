@@ -2,15 +2,19 @@ import * as ffmpeg from "fluent-ffmpeg"
 import * as fse from 'fs-extra';
 import * as mm from 'music-metadata';
 import { Config } from "./config";
-import { start } from "repl";
+
+export class VoiceInput
+{
+    reference: string;
+    path: string;
+    sampleRate: number;
+    numberOfSamples: number;
+}
 
 export class AudioVoice
 {
     output: string
-    inputs: string[] = []
-    inputsName: {[index: number]: string} = {}
-    inputsPath: {[index: number]: string} = {}
-    inputsNumberOfSamples: {[index: number]: number} = {};
+    inputs: {[index: number]: VoiceInput} = {}
     delay: number = 0
     delay_samples: number = 0
     sampling: number = 44100
@@ -36,39 +40,42 @@ export class AudioVoice
         if (!path)
             return;
 
-        this.inputsName[index] = this.inputs.length + ':0';
-        this.inputsPath[index] = path;
-        this.inputs.push(path);
+        let input = new VoiceInput();
+
+        input.reference = Object.keys(this.inputs).length + ':0';
+        input.path = path;
 
         let parsedMeta = await mm.parseFile(path, { duration: true });
 
         let numberOfSamples = parsedMeta.format.numberOfSamples;
         if (numberOfSamples)
-        {
-            this.inputsNumberOfSamples[index] = numberOfSamples;
-        }
+            input.numberOfSamples = numberOfSamples;
 
         let sampleRate = parsedMeta.format.sampleRate;
         if (sampleRate)
         {
-            if (sampleRate != this.sampling)
-                throw new Error("Audio inputs must be of same sample rate (" + path + " with " + sampleRate + ")");
-            this.sampling = sampleRate;
+            //if (sampleRate != this.sampling)
+            //    throw new Error("Audio inputs must be of same sample rate (" + path + " with " + sampleRate + ")");
+            input.sampleRate = sampleRate;
         }
+        this.inputs[index] = input;
     }
 
-    concat(index: number, startPts: number, endPts: number)
+    concat(index: number, startTime: number, endTime: number)
     {
-        if (this.inputsName[index])
+        let input = this.inputs[index];
+        if (input)
         {
-            if (endPts > this.inputsNumberOfSamples[index])
+            let startPts = Math.round(startTime * input.sampleRate);
+            let endPts = Math.round(endTime * input.sampleRate);
+            if (endPts > input.numberOfSamples)
             {
-                console.log("Required end sampling point: " + endPts + ", audio number of samples: " + this.inputsNumberOfSamples[index]);
-                throw new Error('Trying to add a note that is outside the audio range, please check end point for ' + this.inputsPath[index]);
+                console.log("Required end sampling point: " + endTime + ", audio number of samples: " + input.numberOfSamples);
+                throw new Error('Trying to add a note that is outside the audio range, please check end point for ' + input.path);
             }
             this.filters.push({
                 filter: 'atrim', options: {'start_pts': startPts, 'end_pts': endPts},
-                inputs: this.inputsName[index], outputs: 'trimpart' + this.outputs.length
+                inputs: input.reference, outputs: 'trimpart' + this.outputs.length
             });
             this.filters.push({
                 filter: 'asetpts', options: 'PTS-STARTPTS',
@@ -78,11 +85,11 @@ export class AudioVoice
         else
         {
             this.filters.push({
-                filter: 'anullsrc', options: {'r': this.sampling || 44100},
+                filter: 'anullsrc', options: {'r': 44100},
                 outputs: 'nullpart' + this.outputs.length
             });
             this.filters.push({
-                filter: 'atrim', options: {'start_pts': 0, 'end_pts': endPts - startPts},
+                filter: 'atrim', options: {'start_pts': 0, 'end_pts': Math.round((endTime - startTime) * 44100)},
                 inputs: ['nullpart' + this.outputs.length], outputs: 'part' + this.outputs.length
             });
         }
@@ -106,9 +113,9 @@ export class AudioVoice
         }
 
         let cmd = ffmpeg();
-        for (let input of this.inputs)
+        for (let input of Object.values(this.inputs))
         {
-            cmd = cmd.input(input);
+            cmd = cmd.input(input.path);
         }
         cmd = cmd.complexFilter(this.filters, 'output');
         cmd = cmd.output(path);

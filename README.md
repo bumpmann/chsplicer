@@ -25,7 +25,7 @@ Format
 
 ```javascript
 {
-    "version": "1.0.4", // For compatibility
+    "version": "1.0.5", // For compatibility
     "name": "New song name",
     "output": "Path/Relative/To/Songs",
     "songs": { // Input songs. this also can be "song" with only one input value
@@ -45,10 +45,10 @@ Format
     "parts": [ // parts to concat
         {
             "song": "Destiny", // optional. If not specified this will take the first input song.
-            "start": "Guitar Solo 3", "end": 146304, // optional. This can be an event or a chart time reference.
+            "start": "Guitar Solo 3", "end": 146304, // optional. This can be an event or a chart time reference. first and last note if not specified
             "repeat": 5, // optional. This will repeat this part several times
             "event": "Destiny", // optional. This will add an event at the beginning of this part.
-            "startOffset": 128, "endOffset": 128, // optional. This will delay the audio start & end of the number of samples
+            "startOffset": 3, "endOffset": 3, // optional. This will delay the audio start & end in milliseconds
             "quantize": 1 // optional. This will round the start and end at a beat (1), two beats (2), half beat (0.5) etc.
         },
         {"song": "Dragonforce"},
@@ -73,7 +73,6 @@ If the `FFMPEG_PATH` environment variable is set, chsplicer will use it as the f
 Current limitations
 -----
 
-- I did not test to mix songs with different sampling
 - This only uses expert guitar track
 
 
