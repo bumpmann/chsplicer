@@ -1,6 +1,6 @@
 {
   "name": "chsplicer",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "song splicer / customizer for clone hero. This can pick any parts, make loops and so on for godlike trainings",
   "main": "dist/app.js",
   "bin": {
@@ -26,26 +26,28 @@
   ],
   "dependencies": {
     "args": "^5.0.1",
+    "cli-progress": "^3.6.0",
     "extract-zip": "^1.6.7",
     "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "8.1.0",
     "herochartio": "1.0.2",
     "ini": "^1.3.5",
-    "music-metadata": "^6.3.4",
-    "needle": "^2.3.2",
+    "music-metadata": "^6.3.6",
+    "needle": "^2.3.3",
     "sanitize-filename": "^1.6.3",
     "unrar-promise": "^2.0.1"
   },
   "devDependencies": {
     "@types/args": "^3.0.0",
+    "@types/cli-progress": "^3.4.2",
     "@types/extract-zip": "^1.6.2",
     "@types/fluent-ffmpeg": "^2.1.14",
-    "@types/fs-extra": "8.0.1",
+    "@types/fs-extra": "8.1.0",
     "@types/ini": "^1.3.30",
     "@types/needle": "^2.0.4",
-    "@types/node": "12.12.5",
-    "tsc-watch": "^4.0.0",
-    "typescript": "3.6.4"
+    "@types/node": "13.9.2",
+    "tsc-watch": "^4.2.3",
+    "typescript": "3.8.3"
   },
   "engines": {
     "node": ">=12.0.0"

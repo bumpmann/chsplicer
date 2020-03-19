@@ -2,7 +2,6 @@ import { ChartIO, Chart, ChartSong } from 'herochartio'
 import * as fse from 'fs-extra'
 import { Config } from './config'
 import * as ini from 'ini'
-import { Downloader } from './downloader'
 import { ChorusDownloader } from "./ChorusDownloader"
 import { CachedDownloader } from './CachedDownloader'
 
@@ -39,6 +38,7 @@ export class Layout
     parts: LayoutPart[]
     infos: ChartSong
     copy: boolean | {[filename: string]: LayoutSong}
+    autoOffset: number
 
     static async load(path: string)
     {
@@ -62,6 +62,7 @@ export class Layout
             song[1].id = song[0];
             return song[1];
         });
+        layout.autoOffset = obj.autoOffset || 0; // 53862.08; // 1 / (ms offset per second)
         layout.output = obj.output;
         layout.start_blank = obj.start_blank || 8;
         layout.samples_offset = obj.samples_offset || 0;

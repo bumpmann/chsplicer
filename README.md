@@ -41,6 +41,7 @@ Format
         "album.png": "Dragonforce"
     },
     "start_blank": 4, // optional. Starting blank beats
+    "autoOffset": 70, // optional. For long songs, this will add some ms to parts to keep sync = part duration / autoOffset (seconds)
     "samples_offset": -20, // optional. Audio delay in samples (e.g. -20 with 44100 sampling rate = -20 / 44100 seconds)
     "parts": [ // parts to concat
         {

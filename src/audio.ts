@@ -1,15 +1,21 @@
 import * as _path from 'path';
 import * as fse from 'fs-extra';
 import { AudioVoice } from './audioVoice';
+import * as cliProgress from "cli-progress";
 
 export class Audio
 {
     voices: AudioVoice[] = [];
+    expectedDuration: number = 0;
+    currentDuration: number = 0;
+    currentSpeed: number = 0;
+    autoOffset: number = 0;
 
     addVoice(output: string): AudioVoice
     {
         let voice = new AudioVoice();
         voice.output = output;
+        voice.autoOffset = this.autoOffset;
         this.voices.push(voice);
         return voice;
     }
@@ -46,6 +52,36 @@ export class Audio
 
     async save()
     {
+        this.expectedDuration = 0;
+        this.voices.forEach(voice => {
+            this.expectedDuration += voice.expectedDuration;
+            voice.on('progress', () => {
+                this.currentDuration = 0;
+                this.currentSpeed = 0;
+                this.voices.forEach(voice => {
+                    this.currentDuration += voice.currentDuration;
+                    this.currentSpeed += voice.currentSpeed;
+                });
+            });
+        });
+
+        const bar1 = new cliProgress.SingleBar({
+            format: '[{bar}] {percentage}% | ETA: {eta}s | {value}/{total} | Speed: {speed} kbps'
+        }, cliProgress.Presets.shades_classic);
+        bar1.start(Math.ceil(this.expectedDuration), 0, {
+            speed: "N/A"
+        });
+
+        let barupdate = setInterval(() => {
+            bar1.update(Math.floor(this.currentDuration), {
+                speed: Math.round(this.currentSpeed * 10) / 10
+            });
+        }, 500);
+
         await Promise.all(this.voices.map(voice => voice.save()));
+        this.voices.forEach(voice => voice.removeAllListeners('progress'));
+
+        clearInterval(barupdate);
+        bar1.stop();
     }
 }

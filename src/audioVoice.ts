@@ -2,6 +2,7 @@ import * as ffmpeg from "fluent-ffmpeg"
 import * as fse from 'fs-extra';
 import * as mm from 'music-metadata';
 import { Config } from "./config";
+import { EventEmitter } from "events";
 
 export class VoiceInput
 {
@@ -11,7 +12,7 @@ export class VoiceInput
     numberOfSamples: number;
 }
 
-export class AudioVoice
+export class AudioVoice extends EventEmitter
 {
     output: string
     inputs: {[index: number]: VoiceInput} = {}
@@ -19,6 +20,10 @@ export class AudioVoice
     delay_samples: number = 0
     sampling: number = 44100
     valid_exts = ['.ogg', '.mp3'];
+    expectedDuration: number = 0;
+    currentDuration: number = 0;
+    currentSpeed: number = 0;
+    autoOffset: number = 0;
 
     private filters: ffmpeg.FilterSpecification[] = []
     private outputs: string[] = []
@@ -64,13 +69,16 @@ export class AudioVoice
     concat(index: number, startTime: number, endTime: number)
     {
         let input = this.inputs[index];
+        if (this.autoOffset)
+            endTime += ((endTime - startTime) / this.autoOffset) / 1000;
+        this.expectedDuration += endTime - startTime;
         if (input)
         {
             let startPts = Math.round(startTime * input.sampleRate);
             let endPts = Math.round(endTime * input.sampleRate);
             if (endPts > input.numberOfSamples)
             {
-                console.log("Required end sampling point: " + endTime + ", audio number of samples: " + input.numberOfSamples);
+                console.log("Required end sampling point: " + endPts + ", audio number of samples: " + input.numberOfSamples);
                 throw new Error('Trying to add a note that is outside the audio range, please check end point for ' + input.path);
             }
             this.filters.push({
@@ -106,6 +114,7 @@ export class AudioVoice
         });
         if (this.delay)
         {
+            this.expectedDuration += this.delay + (this.delay_samples - 1) / this.sampling;
             this.filters.push({
                 filter: 'adelay', options: {'delays': Math.floor(this.sampling * this.delay + this.delay_samples - 1) + "S", 'all': 1},
                 inputs: 'merged', outputs: 'output'
@@ -129,9 +138,17 @@ export class AudioVoice
             cmd = cmd.setFfmpegPath(Config.bin_dir + "/ffmpeg").outputOption("-threads 7")
         let cmdLine = "";
         await new Promise((resolve, reject) => {
-            cmd.on('start', function(commandLine) {
+            cmd.on('start', commandLine => {
                 cmdLine = commandLine;
-            }).on('error', (err) => {
+            }).on('progress', progress => {
+                if (progress && progress.timemark)
+                {
+                    let timeParse = progress.timemark.match(/(\d\d):(\d\d):(\d\d\.\d\d)/);
+                    this.currentDuration = parseInt(timeParse[1]) * 3600 + parseInt(timeParse[2]) * 60 + parseFloat(timeParse[3]);
+                    this.currentSpeed = progress.currentKbps;
+                    this.emit('progress');
+                }
+            }).on('error', err => {
                 if (err.message)
                     err.message += "\nError with ffmpeg command " + cmdLine;
                 reject(err);

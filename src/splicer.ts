@@ -89,6 +89,7 @@ export class Splicer
         let firstBps = firstPart.song.chart.bpsAt(firstPart.start);
 
         this.audio = new Audio();
+        this.audio.autoOffset = this.layout.autoOffset;
         let audioOuputs: {[name:string]: AudioVoice} = {};
         let audioInputs = await Promise.all(this.layout.songs.map(song => this.audio.scanVoices(song.fullpath)));
         for (let [index, inputs] of audioInputs.entries())
