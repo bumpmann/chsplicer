@@ -1,0 +1,36 @@
+{
+    "version": "1.1.0",
+    "name": "Galneryus best - part 1",
+    "output": "Trainings/Galneryus best - part 1",
+    "infos": {
+        "album": "Galneryus",
+        "genre": "Power Metal",
+        "charter": "",
+        "loading_phrase": "Good luck !",
+        "diff_guitar": 6
+    },
+    "copy": {
+        "album.png": "Beyond of the Ground"
+    },
+    "autoOffset": 75.38648,
+    "songs": {
+        "Angel of Salvation": "chorus:52f851af2a3b7d70dc278c80a1b4f198",
+        "Beyond of the Ground": "chorus:f898cacfb91325b522aa89d109f9c1ed",
+        "Brutal Spiral of Emotions": "chorus:9598c4fd2ff84cee21124e3ad5b5e75d",
+        "Chain of Distress": "chorus:c9986eada91180a96bd3b15f9922644d",
+        "Destinations": "chorus:e9809988c2557b1df560aa24faa53dcd",
+        "Emotions": "chorus:2c7f2c0ccfaae744def7dcdc1b0f616a"
+    },
+    "parts": [
+        {"song": "Angel of Salvation", "event": "Angel of Salvation", "quantize": 1, "start": "verse 3a", "end": "chorus 4a"},
+        {"song": "Beyond of the Ground", "event": "Beyond of the Ground", "quantize": 1, "start": "bridge 1"},
+        {"song": "Brutal Spiral of Emotions", "event": "Brutal Spiral of Emotions (1)", "quantize": 1, "start": 768, "end": "solo 1"},
+        {"song": "Brutal Spiral of Emotions", "event": "Brutal Spiral of Emotions (2)", "quantize": 1, "start": 192016, "end": 195840},
+        {"song": "Brutal Spiral of Emotions", "event": "Brutal Spiral of Emotions (3)", "quantize": 1, "start": 209667, "end": "solo 3d"},
+        {"song": "Chain of Distress", "event": "Chain of Distress", "quantize": 1, "start": "solo 1a", "end": "chorus 3"},
+        {"song": "Destinations", "event": "Destinations (1)", "quantize": 1, "start": 190080, "end": "chorus 2a"},
+        {"song": "Destinations", "event": "Destinations (2)", "quantize": 1, "start": "tradeoff outro a", "end": "tradeoff outro f"},
+        {"song": "Emotions", "event": "Emotions (1)", "quantize": 1, "start": "verse 1a", "end": "bridge a"},
+        {"song": "Emotions", "event": "Emotions (2)", "quantize": 1, "start": "bridge b"}
+    ]
+}

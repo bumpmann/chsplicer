@@ -20,6 +20,18 @@ export class Audio
         return voice;
     }
 
+    getDuration()
+    {
+        let duration = 0;
+        for (let voice of this.voices)
+        {
+            let voiceDuration = voice.getDuration();
+            if (voiceDuration > duration)
+                duration = voiceDuration;
+        }
+        return duration;
+    }
+
     async addInput(index: number, input: string)
     {
         return Promise.all(this.voices.map(voice => voice.addInput(index, input)));
@@ -46,7 +58,7 @@ export class Audio
     async scanVoices(path: string): Promise<string[]>
     {
         let files = await fse.readdir(path);
-        files = files.map(file => _path.basename(file)).filter(file => ['.mp3', '.ogg'].indexOf(_path.extname(file)) != -1);
+        files = files.map(file => _path.basename(file)).filter(file => ['.mp3', '.ogg'].indexOf(_path.extname(file)) != -1 && !file.startsWith("preview."));
         return files;
     }
 
@@ -66,6 +78,7 @@ export class Audio
         });
 
         const bar1 = new cliProgress.SingleBar({
+            clearOnComplete: true,
             format: '[{bar}] {percentage}% | ETA: {eta}s | {value}/{total} | Speed: {speed} kbps'
         }, cliProgress.Presets.shades_classic);
         bar1.start(Math.ceil(this.expectedDuration), 0, {

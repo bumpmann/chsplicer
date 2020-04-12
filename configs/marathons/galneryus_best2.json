@@ -1,0 +1,35 @@
+{
+    "version": "1.1.0",
+    "name": "Galneryus best - part 2",
+    "output": "Trainings/Galneryus best - part 2",
+    "infos": {
+        "album": "Galneryus",
+        "genre": "Power Metal",
+        "charter": "",
+        "loading_phrase": "Good luck !",
+        "diff_guitar": 6
+    },
+    "copy": {
+        "album.png": "Fall in the Dark"
+    },
+    "autoOffset": 75.38648,
+    "songs": {
+        "Endless Story": "chorus:82c371de3da56355171fa583cc193646",
+        "Fall in the Dark": "chorus:2471d32bf0c729e1c72b81319600a2d9",
+        "A Far-Off Distance": "chorus:19c1a91670c48ad3f68558045399be2b",
+        "The Force of Courage": "chorus:ae2f8883d1d5570fa6f439f0660dcf59",
+        "Glorious Aggressor": "chorus:b4f96b4850c8b661e8d8d43dfdafc39c",
+        "Heavenly Punishment": "chorus:2b51f783ac40ab79b11bbfdca654fe76"
+    },
+    "parts": [
+        {"song": "Endless Story", "event": "Endless Story", "quantize": 1, "start": "bridge b", "end": "really long break a"},
+        {"song": "Endless Story", "event": "Endless Story (2)", "quantize": 1, "start": "outro solo a"},
+        {"song": "Fall in the Dark", "event": "Fall in the Dark", "quantize": 1, "start": 248160, "end": "outro"},
+        {"song": "A Far-Off Distance", "event": "A Far-Off Distance", "quantize": 1, "start": "verse 2", "end": "piano chorus"},
+        {"song": "The Force of Courage", "event": "The Force of Courage", "quantize": 1, "start": "guitar solo 1", "end": "guitar solo 4e"},
+        {"song": "Glorious Aggressor", "event": "Glorious Aggressor", "quantize": 1, "start": "intro a", "end": 77568},
+        {"song": "Heavenly Punishment", "event": "Heavenly Punishment", "quantize": 1, "start": "guitar solo 1a", "end": "bridge 3"},
+        {"song": "Heavenly Punishment", "event": "Heavenly Punishment (2)", "quantize": 1, "start": "chorus 3b", "end": 210288}
+
+    ]
+}

@@ -1,0 +1,39 @@
+{
+    "version": "1.1.0",
+    "name": "Galneryus best - part 3",
+    "output": "Trainings/Galneryus best - part 3",
+    "infos": {
+        "album": "Galneryus",
+        "genre": "Power Metal",
+        "charter": "",
+        "loading_phrase": "Good luck !",
+        "diff_guitar": 6
+    },
+    "copy": {
+        "album.png": "Infinity"
+    },
+    "autoOffset": 75.38648,
+    "songs": {
+        "Hunting For Your Dream": "chorus:812792060e29ee437c577f518cea7ea4",
+        "In The Delight": "chorus:6c581a9053336f56bf0ba3119385887e",
+        "Infinity": "chorus:ac8d38c62be7d63a16244ba226e18e17",
+        "Lament": "chorus:b53385b01e8bbc5975d6381ccfadd568",
+        "Lonely as a Stranger": "chorus:b1f2e90b71c987d1aef326d1826ab5a0",
+        "Never Die (Live, Yngwie Malmsteen cover)": "chorus:ff7fc62bbb8bfb29717a6d3702376151"
+    },
+    "parts": [
+
+        {"song": "Hunting For Your Dream", "event": "Hunting For Your Dream", "quantize": 1, "start": 223680, "end": 312960},
+        {"song": "Hunting For Your Dream", "event": "Hunting For Your Dream(2)", "quantize": 1, "start": "chorus 2b", "end": "guitar solo b"},
+        {"song": "Hunting For Your Dream", "event": "Hunting For Your Dream(3)", "quantize": 1, "start": "outro riff", "end": 451200},
+        {"song": "In The Delight", "event": "In The Delight", "quantize": 1, "start": "chorus 2", "end": "outro a"},
+        {"song": "Infinity", "event": "Infinity", "quantize": 1, "start": "chorus 1", "end": "break"},
+        {"song": "Infinity", "event": "Infinity (2)", "quantize": 1, "start": "chorus 3"},
+        {"song": "Lament", "event": "Lament", "quantize": 1, "start": 180480, "end": "chorus 3a"},
+        {"song": "Lament", "event": "Lament (2)", "quantize": 1, "start": "chorus 3b", "end": 432960},
+        {"song": "Lonely as a Stranger", "event": "Lonely as a Stranger", "quantize": 1, "start": 301920, "end": 394080},
+        {"song": "Lonely as a Stranger", "event": "Lonely as a Stranger (2)", "quantize": 1, "start": 444000, "end": 475200},
+        {"song": "Lonely as a Stranger", "event": "Lonely as a Stranger (3)", "quantize": 1, "start": 513600, "end": "outro"},
+        {"song": "Never Die (Live, Yngwie Malmsteen cover)", "event": "Never Die (Live, Yngwie Malmsteen cover)", "quantize": 1, "start": "bridge", "end": 245760}
+    ]
+}

@@ -1,0 +1,44 @@
+{
+    "version": "1.1.0",
+    "name": "Galneryus best - part 4",
+    "output": "Trainings/Galneryus best - part 4",
+    "infos": {
+        "album": "Galneryus",
+        "genre": "Power Metal",
+        "charter": "",
+        "loading_phrase": "Good luck !",
+        "diff_guitar": 6
+    },
+    "copy": {
+        "album.png": "Phoenix Rising"
+    },
+    "autoOffset": 75.38648,
+    "songs": {
+        "Owari Naki, Kono Uta": "chorus:354949ab3f4e94d690f67366229429d9",
+        "Phoenix Rising": "chorus:49ab141c5d0eb9aeacb2b98c91f23e5a",
+        "The Promised Flag": "chorus:e56d8f22d4ebca4d3b4596a7f4d7adb2",
+        "Quiet Wish": "chorus:7b9aa935d9c6cf344a40883896285ea1",
+        "Rain of Tears": "chorus:bcc8f611801c97703e5ef3f6450dca02",
+        "Raise My Sword": "chorus:933b3fe342fbcb86e32f98f99dd2cdcb"
+    },
+    "parts": [
+        {"song": "Owari Naki, Kono Uta", "event": "Owari Naki, Kono Uta", "quantize": 1, "start": 4800, "end": "guitar enters"},
+        {"song": "Owari Naki, Kono Uta", "event": "Owari Naki, Kono Uta (2)", "quantize": 1, "start": "verse 2", "end": "Return to Main Riff"},
+        {"song": "Owari Naki, Kono Uta", "event": "Owari Naki, Kono Uta (3)", "quantize": 1, "start": "chorus 3", "end": 271488},
+        {"song": "Phoenix Rising", "event": "Phoenix Rising", "quantize": 1, "start": 138240, "end": "verse 1b"},
+        {"song": "Phoenix Rising", "event": "Phoenix Rising (2)", "quantize": 1, "start": "verse 2b", "end": "chorus 3a"},
+        {"song": "Phoenix Rising", "event": "Phoenix Rising (3)", "quantize": 1, "start": "outro solo", "end": 741600},
+        {"song": "Phoenix Rising", "event": "Phoenix Rising (4)", "quantize": 1, "start": 912480, "end": 1058760},
+        {"song": "The Promised Flag", "event": "The Promised Flag", "quantize": 1, "start": "main theme b", "end": 406560},
+        {"song": "Quiet Wish", "event": "Quiet Wish", "quantize": 1, "start": "Guitar Solo 1A", "end": "verse 1b"},
+        {"song": "Quiet Wish", "event": "Quiet Wish (2)", "quantize": 1, "start": "verse 3b", "end": "Pre-Chorus 3"},
+        {"song": "Quiet Wish", "event": "Quiet Wish (3)", "quantize": 1, "start": "Outro B", "end": 200838},
+        {"song": "Rain of Tears", "event": "Rain of Tears", "quantize": 1, "start": "Guitar intro", "end": "verse 1"},
+        {"song": "Rain of Tears", "event": "Rain of Tears (2)", "quantize": 1, "start": "Fast Bridge", "end": "Guitar Bridge"},
+        {"song": "Rain of Tears", "event": "Rain of Tears (3)", "quantize": 1, "start": "Guitar Build Up", "end": "verse 2a"},
+        {"song": "Rain of Tears", "event": "Rain of Tears (4)", "quantize": 1, "start": "Synth Solo 2", "end": 178752},
+        {"song": "Raise My Sword", "event": "Raise My Sword", "quantize": 1, "start": 81408, "end": 113472},
+        {"song": "Raise My Sword", "event": "Raise My Sword (2)", "quantize": 1, "start": 133440, "end": 173568},
+        {"song": "Raise My Sword", "event": "Raise My Sword (3)", "quantize": 1, "start": 195072, "end": 254976}
+    ]
+}

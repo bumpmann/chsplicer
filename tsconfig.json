@@ -2,7 +2,7 @@
     "compilerOptions": {
         "module": "commonjs",
         "target": "ESNext",
-        "noImplicitAny": true,
+        "noImplicitAny": false,
         "strictNullChecks": true,
         "moduleResolution": "node",
         "preserveSymlinks": true,

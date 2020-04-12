@@ -1,12 +1,11 @@
 Node.js: chsplicer
 =================
 
-`chsplicer` a song splicer / customizer for clone hero. This can pick any parts, make loops and so on for godlike trainings.
+`chsplicer` is a toolbox for clone hero songs. The main features are:
 
-You can point source songs from:
- - a relative path from clone hero song folder
- - a song on chorus by its md5 (this will download the song).
- - an url of a song archive (zip / rar)
+- Pick parts from different songs or make loops for godlike trainings.
+- Download and extract songs from chorus or an url.
+- Generate difficuly levels using a dictionary or a trained neural network ai.
 
 Installation
 ------------
@@ -16,16 +15,21 @@ Installation
 Usage
 -----
 
-    chsplicer run ./examples/destiny.json
+The first argument is a path to a json configuration. This defaults in configs dir.
 
-    chsplicer runall ./examples
+    chsplicer marathons/usual_deaths
+
+    chsplicer download chorus:d3cfc782368b0d9c70e3369c4a312e1f
+
+    chsplicer translate './Ozzy Osbourne - Gets Me Through' --method=ai --overwrite
+
 
 Format
 ------
 
 ```javascript
 {
-    "version": "1.0.5", // For compatibility
+    "version": "1.1.0",
     "name": "New song name",
     "output": "Path/Relative/To/Songs",
     "songs": { // Input songs. this also can be "song" with only one input value
@@ -58,6 +62,17 @@ Format
 }
 ```
 
+Most of properties are handlebars template so that you can send cli parameters.
+
+Notes
+-----
+
+You can point source songs from:
+ - a relative path from clone hero song folder
+ - a song on chorus by its md5 (this will download the song).
+ - an url of a song archive (zip / rar)
+
+
 Prerequisites
 -------------
 
@@ -70,11 +85,6 @@ If the `FFMPEG_PATH` environment variable is set, chsplicer will use it as the f
 **Windows users**: most probably ffmpeg will _not_ be in your `%PATH`, so you _must_ set `%FFMPEG_PATH`
 
 **Debian/Ubuntu users**: the official repositories have the ffmpeg executable in the `libav-tools` package, and they are actually rebranded avconv/avprobe executables (avconv is a fork of ffmpeg).  They should be mostly compatible, but should you encounter any issue, you may want to use the real ffmpeg instead. You can either compile it from source or find a pre-built .deb package at https://ffmpeg.org/download.html (For Ubuntu, the `ppa:mc3man/trusty-media` PPA provides recent builds).
-
-Current limitations
------
-
-- This only uses expert guitar track
 
 
 License

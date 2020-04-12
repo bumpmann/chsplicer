@@ -1,0 +1,16 @@
+{
+    "version": "1.1.0",
+    "name": "build a translation dictionary from the local songs",
+    "infos": {
+        "album": "",
+        "genre": "",
+        "charter": "",
+        "loading_phrase": "",
+        "diff_guitar": 0
+    },
+    "start_blank": 0,
+    "plugins": [
+        ["songScanner", {"path": "{{songs}}/Guitar Hero III - Bonus", "except": "{{songs}}/Trainings"}],
+        ["dictionaryBuilder", {"chart": "translations/local2"}]
+    ]
+}

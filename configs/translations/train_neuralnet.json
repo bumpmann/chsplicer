@@ -1,0 +1,18 @@
+{
+    "version": "1.1.0",
+    "name": "train a neural net AI from local songs",
+    "infos": {
+        "album": "",
+        "genre": "",
+        "charter": "",
+        "loading_phrase": "",
+        "diff_guitar": 0
+    },
+    "start_blank": 0,
+    "require": {"path": "./build_dictionary", "check": "{{assets}}/translations/local2.chart"},
+    "plugin": ["aiTrainer", {"path": "translations/local2"}],
+    "song": "{{assets}}/translations/local2",
+    "parts": [
+        {"quantize": 1}
+    ]
+}

@@ -1,6 +1,34 @@
 import * as readline from 'readline';
 import * as fse from 'fs-extra';
 import * as _path from 'path';
+import * as Handlebars from 'handlebars';
+
+Handlebars.registerHelper({
+    eq: function (v1, v2) {
+        return v1 === v2;
+    },
+    ne: function (v1, v2) {
+        return v1 !== v2;
+    },
+    lt: function (v1, v2) {
+        return v1 < v2;
+    },
+    gt: function (v1, v2) {
+        return v1 > v2;
+    },
+    lte: function (v1, v2) {
+        return v1 <= v2;
+    },
+    gte: function (v1, v2) {
+        return v1 >= v2;
+    },
+    and: function () {
+        return Array.prototype.slice.call(arguments).every(Boolean);
+    },
+    or: function () {
+        return Array.prototype.slice.call(arguments, 0, -1).some(Boolean);
+    }
+});
 
 export interface LocalConfig
 {
@@ -10,10 +38,42 @@ export interface LocalConfig
 
 export class Config {
 	static local: LocalConfig = {} as LocalConfig;
+	static dir = __dirname + "/..";
+	static assets_dir = __dirname + "/../assets";
 	static bin_dir = __dirname + "/../lib";
 	static config_path = __dirname + "/../config.json";
 	static cache_path = __dirname + "/../cache";
 	static temp_path = __dirname + "/../temp";
+	static configs_path = __dirname + "/../configs";
+	static verbose = false;
+
+	static resolveView(text: string, view: any = {})
+	{
+		let tmpl = Handlebars.compile(text);
+		let res = tmpl(view);
+		return res.toLowerCase() == "false" ? "" : res;
+	}
+
+	static resolvePath(path: string, relative: string = ".", view: any = {})
+	{
+		let fullview = {
+			cache: Config.local.cachePath,
+			songs: Config.local.songPath,
+			app: Config.dir,
+			assets: Config.assets_dir,
+			bin: Config.bin_dir,
+			temp: Config.temp_path
+		}
+		for (let k in view)
+		{
+			if (!fullview[k])
+			fullview[k] = view[k];
+		}
+		let resolved = this.resolveView(path, fullview);
+		if (!resolved)
+			return "";
+		return _path.resolve(relative, resolved);
+	}
 
 	static async loadConfig()
 	{

@@ -38,6 +38,15 @@ export class AudioVoice extends EventEmitter
         return "";
     }
 
+    getDuration(): number
+    {
+        if (!Object.keys(this.inputs).length)
+            return 0;
+
+        let longestInput = Object.values(this.inputs).reduce((m, v) => (v.numberOfSamples / v.sampleRate) > (m.numberOfSamples / m.sampleRate) ? v : m);
+        return longestInput.numberOfSamples / longestInput.sampleRate;
+    }
+
     async addInput(index: number, path: string)
     {
         path = await this.findInput(path);
@@ -78,8 +87,8 @@ export class AudioVoice extends EventEmitter
             let endPts = Math.round(endTime * input.sampleRate);
             if (endPts > input.numberOfSamples)
             {
-                console.log("Required end sampling point: " + endPts + ", audio number of samples: " + input.numberOfSamples);
-                throw new Error('Trying to add a note that is outside the audio range, please check end point for ' + input.path);
+                //console.log("Required end sampling point: " + endPts + ", audio number of samples: " + input.numberOfSamples);
+                //throw new Error('Trying to add a note that is outside the audio range, please check end point for ' + input.path);
             }
             this.filters.push({
                 filter: 'atrim', options: {'start_pts': startPts, 'end_pts': endPts},

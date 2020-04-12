@@ -1,0 +1,44 @@
+{
+    "version": "1.1.0",
+    "name": "Anti death training",
+    "output": "Trainings/Anti death training",
+    "infos": {
+        "album": "Galneryus, Dragonforce",
+        "artist": "Galneryus, Dragonforce",
+        "genre": "Power Metal",
+        "charter": "",
+        "loading_phrase": "Good luck !",
+        "diff_guitar": 6
+    },
+    "copy": {
+        "album.png": "Fall in the Dark"
+    },
+    "autoOffset": 75.38648,
+    "songs": {
+        "Emotions": "chorus:2c7f2c0ccfaae744def7dcdc1b0f616a",
+        "Fall in the Dark": "chorus:2471d32bf0c729e1c72b81319600a2d9",
+        "The Promised Flag": "chorus:e56d8f22d4ebca4d3b4596a7f4d7adb2",
+        "Destiny": "chorus:d3cfc782368b0d9c70e3369c4a312e1f",
+        "dragon": "url:https://public.fightthe.pw/rehosts/randomshit/Way%20Too%20Much%20Fucking%20God%20Damn%20DragonForce%20Like%20Jesus%20Christ%202.0%20Special%20Edition%20For%20RhythmFag.zip"
+    },
+    "parts": [
+        {"song": "dragon", "event": "DF The Game", "start": "The Game", "end": "Tomorrow's Kings"},
+        {"song": "dragon", "event": "DF Three Hammers", "start": "Three Hammers", "end": "Symphony Of The Nigth"},
+        {"song": "Fall in the Dark", "event": "Fall in the Dark", "quantize": 1, "start": 248160, "end": "outro"},
+        {"song": "dragon", "event": "DF Ring of Fire", "start": "Ring of Fire", "end": "Power And Glory"},
+        {"song": "dragon", "event": "DF Figth To Be Free", "start": "Figth To Be Free", "end": "Galactic Astro Domination"},
+        {"song": "The Promised Flag", "event": "The Promised Flag", "quantize": 1, "start": "main theme b", "end": 406560},
+        {"song": "dragon", "event": "DF Galactic Astro Domination", "start": "Galactic Astro Domination", "end": "Ashes Of The Dawn"},
+        {"song": "dragon", "event": "DF Judgement Day", "start": "Judgement Day", "end": "Astral Empire"},
+        {"song": "Emotions", "event": "Emotions (1)", "quantize": 1, "start": "verse 1a", "end": "bridge a"},
+        {"song": "dragon", "event": "DF Astral Empire", "start": "Astral Empire", "end": "Curse of Darkness"},
+        {"song": "dragon", "event": "DF Curse of Darkness", "start": "Curse of Darkness", "end": "Silence"},
+        {"song": "Emotions", "event": "Emotions (2)", "quantize": 1, "start": "bridge b"},
+        {"song": "dragon", "event": "DF Midnigth MadNess", "start": "Midnigth MadNess", "end": "WAR!"},
+        {"song": "dragon", "event": "DF WAR!", "start": "WAR!", "end": "Land of Shattered Dreams"},
+        {"song": "dragon", "event": "Dragonforce special tapping", "start": 4976579, "end": 4995779},
+        {"song": "dragon", "event": "DF Land of Shattered Dreams", "start": "Land of Shattered Dreams", "end": "The Edge of The World"},
+        {"song": "dragon", "event": "DF Evil Dead", "start": "Evil Dead"},
+        {"song": "Destiny", "event": "Destiny", "start": "Guitar Solo 3", "end": "Main Riff 3"}
+    ]
+}
