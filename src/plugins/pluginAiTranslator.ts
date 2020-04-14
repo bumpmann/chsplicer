@@ -8,7 +8,7 @@ import { Config } from "../config";
 import * as _ from "lodash";
 import { TranslateMeasure } from "./translations/translateMeasure";
 import { Translations } from "./translations/translations";
-import { PluginAiTrainer } from "./pluginAiTrainer";
+import { Brain, BrainConfig } from "./pluginAiTrainer";
 
 export class PluginAiTranslator extends AppPlugin
 {
@@ -22,13 +22,14 @@ export class PluginAiTranslator extends AppPlugin
         this.options.src = this.options.src || "ExpertSingle";
         if (!this.options.path)
             throw new Error("Missing parameter 'path' of the trained ai");
-        this.options.overwrite = Config.resolveView(this.options.overwrite, this.options.args);
+        if ((typeof this.options.overwrite) == "string")
+            this.options.overwrite = Config.resolveView(this.options.overwrite, this.options.args);
         this.options.path = Config.resolvePath(this.options.path, Config.assets_dir, this.options.args);
     }
 
     async chartPass(chart: Chart)
     {
-        this.log(`Started building translations using ${_path.basename(this.options.path)}-*.brain"`);
+        this.log(`Started building translations using ${_path.basename(this.options.path)}"`);
 
         let resolution = chart.Song.Resolution;
 
@@ -66,7 +67,7 @@ export class PluginAiTranslator extends AppPlugin
         bar1.stop();
         this.log("Splitted measures");
 
-        await this.loadBrain(_path.resolve(Config.assets_dir, this.options.path));
+        await this.loadBrain();
 
         // translate measures
         for (let trackName of chartTrackNames)
@@ -99,21 +100,30 @@ export class PluginAiTranslator extends AppPlugin
         this.log("Translated measures");
     }
 
-    async loadBrain(path: string)
+    async loadBrain()
     {
-        for (let trackName of Translations.trackNames)
+        let brainInfos: Brain;
+        try
         {
-            if (trackName == this.options.src)
-                continue;
+            brainInfos = await fse.readJson(`${this.options.path}/brain.json`);
+        }
+        catch (e)
+        {
+            throw new Error("Could not load " + _path.basename(`${this.options.path}/brain.json`));
+        }
 
-            this.net[trackName] = new brain.NeuralNetwork(PluginAiTrainer.nnConfig);
+        for (let trackName in brainInfos.tracks)
+        {
+            let bestModel: BrainConfig = brainInfos.tracks[trackName].best;
             try
             {
-                this.net[trackName].fromJSON(JSON.parse(await fse.readFile(`${path}-${trackName}.brain`, 'utf-8')))
+                this.net[trackName] = new brain.NeuralNetwork(bestModel.config);
+                this.net[trackName].fromJSON(await fse.readJson(`${this.options.path}/${bestModel.name}`));
             }
             catch (e)
             {
-                console.warn("Could not load " + _path.basename(`${path}-${trackName}.brain`) + ", starting from a new neural net.");
+                console.log(e)
+                throw new Error("Could not load " + _path.basename(`${bestModel.name}`));
             }
         }
     }

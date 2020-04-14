@@ -11,18 +11,26 @@ export class PluginSongScanner extends AppPlugin
         await super.load(options);
         if (!this.options.path)
             throw new Error("Plugin songScanner must have a parameter \"path\"");
-        this.options.path = this.options.path.replace(/\{songs\}/, Config.local.songPath);
-        this.options.path = this.options.path.replace(/\{assets\}/, Config.assets_dir);
+        if ((typeof this.options.path) == "string")
+            this.options.path = [this.options.path];
+        for (let i in this.options.path)
+        {
+            this.options.path[i] = Config.resolvePath(this.options.path[i], Config.assets_dir, this.options.args);
+        }
     }
 
     async layoutPass(obj: any)
     {
-        let dirs = await this.scanDir(this.options.path);
+        let dirs: string[] = [];
+        for (let path of this.options.path)
+        {
+            dirs = dirs.concat(await this.scanDir(path));
+        }
+
         let excepts = !this.options.except ? [] : (Array.isArray(this.options.except) ? this.options.except : [this.options.except]);
         for (let except of excepts)
         {
-            except = except.replace(/\{songs\}/, Config.local.songPath);
-            except = except.replace(/\{assets\}/, Config.assets_dir);
+            except = Config.resolvePath(except, Config.local.songPath, this.options.args);
             except = _path.normalize(except).replace(/\\/g, '/');
             dirs = dirs.filter(path => _path.normalize(path).replace(/\\/g, '/').indexOf(except) == -1)
         }

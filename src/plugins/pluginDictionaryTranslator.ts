@@ -4,6 +4,7 @@ import * as _path from "path";
 import * as cliProgress from "cli-progress";
 import { Config } from "../config";
 import * as _ from "lodash";
+import * as fse from "fs-extra";
 import { TranslateMeasure } from "./translations/translateMeasure";
 import { Translations } from "./translations/translations";
 
@@ -17,7 +18,10 @@ export class PluginDictionaryTranslator extends AppPlugin
         this.options.src = this.options.src || "ExpertSingle";
         if (!this.options.chart)
             throw new Error("Missing parameter 'chart' to load the dictionary");
-        this.options.overwrite = Config.resolveView(this.options.overwrite, this.options.args);
+        if (!await fse.pathExists(this.options.chart) && !await fse.pathExists(this.options.chart + ".chart"))
+            throw new Error("Could not load dictionary " + this.options.chart);
+        if ((typeof this.options.overwrite) == "string")
+            this.options.overwrite = Config.resolveView(this.options.overwrite, this.options.args);
         this.options.chart = Config.resolvePath(this.options.chart, Config.assets_dir, this.options.args);
     }
 
@@ -67,8 +71,6 @@ export class PluginDictionaryTranslator extends AppPlugin
         }
         bar1.stop();
         this.log("Splitted measures");
-
-        let trackNames = Translations.trackNames;
 
         let translations = new Translations();
         translations.loadTranslations(chartDictionary);

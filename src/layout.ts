@@ -154,13 +154,13 @@ export class Layout
         if (obj.ignoreAudio)
             layout.options.ignoreAudio = true;
 
+        console.log("Loading songs...");
         for (let [index, objsong] of obj.songs.entries())
         {
             let song = new LayoutSong();
             song.id = objsong.id;
             song.index = index;
             song.path = objsong.path;
-            song.path = song.path.replace(/\{assets\}/g, Config.assets_dir);
             song.fullpath = await Layout.loadSong(song.path, args);
             if (await fse.pathExists(`${song.fullpath}/notes.chart`) || await fse.pathExists(`${song.fullpath}/notes.mid`))
                 song.chart = await ChartIO.load(`${song.fullpath}/notes`);

@@ -4,6 +4,7 @@ import { Config } from './config';
 import * as mri from 'mri';
 import * as _path from 'path';
 import * as cluster from 'cluster';
+import * as os from 'os';
 
 import { AppPlugin } from './appPlugin';
 import { PluginTrackCopy } from './plugins/pluginTrackCopy';
@@ -70,6 +71,7 @@ if (cluster.isMaster)
 }
 else
 {
+    os.setPriority(os.constants.priority.PRIORITY_BELOW_NORMAL);
     worker().then(() => {
     }).catch(e => {
         console.error("Worker #" + process.pid + ":", e);

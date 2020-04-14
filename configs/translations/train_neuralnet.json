@@ -1,6 +1,6 @@
 {
     "version": "1.1.0",
-    "name": "train a neural net AI from local songs",
+    "name": "train a neural net AI from a dictionary",
     "infos": {
         "album": "",
         "genre": "",
@@ -9,9 +9,9 @@
         "diff_guitar": 0
     },
     "start_blank": 0,
-    "require": {"path": "./build_dictionary", "check": "{{assets}}/translations/local2.chart"},
-    "plugin": ["aiTrainer", {"path": "translations/local2"}],
-    "song": "{{assets}}/translations/local2",
+    "require": {"path": "./build_dictionary", "check": "{{assets}}/translations/gh+rb.chart"},
+    "plugin": ["aiTrainer", {"path": "translations/gh+rb", "only": "{{only}}"}],
+    "song": "{{assets}}/translations/gh+rb",
     "parts": [
         {"quantize": 1}
     ]

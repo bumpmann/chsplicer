@@ -227,7 +227,7 @@ export class Splicer
                     overwrite: index == 0,
                     filter: (src: string, dest: string) => {
                         return (! this.audio.isAudioPath(dest) || this.layout.options.ignoreAudio)
-                            && _path.extname(dest) != '.dat' && _path.extname(dest) != '.db' && _path.extname(dest) != '.json'
+                            && _path.extname(dest) != '.dat' && _path.extname(dest) != '.db'
                             && [
                                 _path.normalize(_path.resolve(this.output + "/notes.mid")),
                                 _path.normalize(_path.resolve(this.output + "/notes.chart")),

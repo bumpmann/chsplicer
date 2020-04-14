@@ -7,11 +7,12 @@
     "ignoreAudio": true,
     "args": {
         "1": {"resolve": true},
-        "method": {"default": "ai"}
+        "method": {"default": "ai"},
+        "using": {"default": "gh+rb"}
     },
     "plugins": [
-        ["aiTranslator", {"if": "{{eq method \"ai\"}}", "path": "translations/local", "overwrite": "{{overwrite}}"}],
-        ["dictionaryTranslator", {"if": "{{eq method 'dictionary'}}", "chart": "translations/local", "overwrite": "{{overwrite}}"}]
+        ["aiTranslator", {"if": "{{eq method 'ai'}}", "path": "translations/{{using}}", "overwrite": "{{overwrite}}"}],
+        ["dictionaryTranslator", {"if": "{{eq method 'dictionary'}}", "chart": "translations/{{using}}", "overwrite": "{{overwrite}}"}]
     ],
     "parts": [{"start": 0, "event": true, "end": -1}]
 }

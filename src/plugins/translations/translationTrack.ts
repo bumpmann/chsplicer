@@ -58,6 +58,20 @@ export class TranslationTrack
         return values;
     }
 
+    writeBuffer(buff: Buffer, offset: number)
+    {
+        let values = this.toArray();
+        for (let i = 0; i < values.length; i+=8)
+        {
+            buff.writeUInt8(
+                values[i] | values[i+1] << 1 | values[i+2] << 2 | values[i+3] << 3
+                | values[i+4] << 4 | values[i+5] << 5 | values[i+6] << 6 | values[i+7] << 7,
+
+                offset + i / 8
+            );
+        }
+    }
+
     fromArray(arr: number[])
     {
         this.track = {};

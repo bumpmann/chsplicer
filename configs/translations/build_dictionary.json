@@ -10,7 +10,13 @@
     },
     "start_blank": 0,
     "plugins": [
-        ["songScanner", {"path": "{{songs}}/Guitar Hero III - Bonus", "except": "{{songs}}/Trainings"}],
-        ["dictionaryBuilder", {"chart": "translations/local2"}]
+        ["songScanner", {"path": [
+            "{{songs}}/Guitar Hero III - Bonus",
+            "{{songs}}/Guitar Hero III - Quickplay",
+            "{{songs}}/Guitar Hero World Tour",
+            "{{songs}}/Guitar Hero World Tour DLC",
+            "{{songs}}/Rock Band 3 + DLC"
+        ]}],
+        ["dictionaryBuilder", {"chart": "translations/gh+rb"}]
     ]
 }

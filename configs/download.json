@@ -1,6 +1,6 @@
 {
     "version": "1.1.0",
-    "output": "{{out}}/{infos.name}",
+    "output": "{{out}}/{{infos.name}}",
     "song": "{{1}}",
     "copy": true,
     "start_blank": 0,
@@ -8,6 +8,6 @@
     "args": {
         "out": {"default": "chsplicer"}
     },
-    "plugin": ["aiTranslator", {"if": "{{translate}}", "path": "translations/local", "overwrite": true}],
+    "plugin": ["aiTranslator", {"if": "{{translate}}", "path": "translations/gh+rb"}],
     "parts": [{"start": 0, "event": true, "end": -1}]
 }

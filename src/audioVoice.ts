@@ -61,10 +61,6 @@ export class AudioVoice extends EventEmitter
 
         let parsedMeta = await mm.parseFile(path, { duration: true });
 
-        let numberOfSamples = parsedMeta.format.numberOfSamples;
-        if (numberOfSamples)
-            input.numberOfSamples = numberOfSamples;
-
         let sampleRate = parsedMeta.format.sampleRate;
         if (sampleRate)
         {
@@ -72,6 +68,13 @@ export class AudioVoice extends EventEmitter
             //    throw new Error("Audio inputs must be of same sample rate (" + path + " with " + sampleRate + ")");
             input.sampleRate = sampleRate;
         }
+
+        let numberOfSamples = parsedMeta.format.numberOfSamples;
+        if (numberOfSamples)
+            input.numberOfSamples = numberOfSamples;
+        else if (parsedMeta.format.duration && sampleRate)
+            input.numberOfSamples = parsedMeta.format.duration * sampleRate;
+
         this.inputs[index] = input;
     }
 
