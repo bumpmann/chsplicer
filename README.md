@@ -31,7 +31,7 @@ Included configs
 
 This folder contains the songs where i added some loops when it's a hard part. (currently only ttfaf)
 
-### [marathons](https://github.com/bumpmann/chsplicer/tree/master/configs/harder)
+### [marathons](https://github.com/bumpmann/chsplicer/tree/master/configs/marathons)
 
 This folder contains some long songs where i paste different interesting parts.
 
