@@ -127,11 +127,11 @@ This is how are described these configs:
 Plugins
 -------
 
-- aiTranslator: translate the Expert track to others using an existing ai in `path`, this can `overwrite` the existing ones if set.
-- aiTrainer: train or resume training an ai in `path`. The param `only` can be use to train only one track (HardSingle, MediumSingle, EasySingle)
-- dictionaryTranslator: translate the Expert track to others using an existing dictionary chart in `chart`, this can `overwrite` the existing ones if set.
-- dictionaryBuilder: build a dictionary of the measure's translations from Expert to Hard/Medium/Easy to the `chart`. This will keep only the translations that have the more occurences.
-- songScanner: scan one or more folders for songs in `path` (string or array). You can ignore some path with `except` (string or array). This adds the songs and parts to the current config.
+- `aiTranslator`: translate the Expert track to others using an existing ai in `path`, this can `overwrite` the existing ones if set.
+- `aiTrainer`: train or resume training an ai in `path`. The param `only` can be use to train only one track (HardSingle, MediumSingle, EasySingle)
+- `dictionaryTranslator`: translate the Expert track to others using an existing dictionary chart in `chart`, this can `overwrite` the existing ones if set.
+- `dictionaryBuilder`: build a dictionary of the measure's translations from Expert to Hard/Medium/Easy to the `chart`. This will keep only the translations that have the more occurences.
+- `songScanner`: scan one or more folders for songs in `path` (string or array). You can ignore some path with `except` (string or array). This adds the songs and parts to the current config.
 
 Notes
 -----
