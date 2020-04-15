@@ -90,7 +90,7 @@ export class TranslationTrack
                 }
             }
             if (elts.length)
-                this.track[time * this.resolution / 48] = elts;
+                this.track[Math.round(time * this.resolution / 48)] = elts;
         }
     }
 }

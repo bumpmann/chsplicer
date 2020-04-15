@@ -28,7 +28,7 @@ async function run(args: any)
 {
     if (args.verbose)
         Config.verbose = true;
-    Config.loadConfig();
+    await Config.loadConfig();
 
     await new Splicer().run(args["0"], args);
     console.log("Done config " + _path.basename(args["0"]) + " !");

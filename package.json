@@ -12,7 +12,7 @@
     "start-big": "node --max-old-space-size=7096 ./dist/app.js --verbose=true",
     "watch": "tsc-watch -p . --onFailure 'echo Beep! Compilation Failed'",
     "build": "tsc -p .",
-    "test": "npm i -g && chsplicer runall ./examples"
+    "test": "npm i -g && chsplicer run marathons/galneryus_best"
   },
   "author": "Aurelie Richard <aurelierichard2048@gmail.com>",
   "bugs": {

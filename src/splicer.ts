@@ -261,6 +261,8 @@ export class Splicer
                 let existingFiles = await fse.readdir(finalOutput);
                 for (let file of existingFiles)
                 {
+                    if (await fse.pathExists(this.output + "/" + file))
+                        continue;
                     try
                     {
                         await fse.remove(finalOutput + "/" + file);
@@ -271,7 +273,11 @@ export class Splicer
                     }
                 }
             }
-            await fse.copy(this.output, finalOutput, {overwrite: true})
+            let newFiles = await fse.readdir(this.output);
+            for (let file of newFiles)
+            {
+                await fse.promises.copyFile(this.output + "/" + file, finalOutput + "/" + file);
+            }
             this.output = finalOutput;
         }
     }

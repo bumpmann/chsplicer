@@ -33,7 +33,12 @@ export class PluginAiTranslator extends AppPlugin
 
         let resolution = chart.Song.Resolution;
 
-        // Cut each tracks / measures
+        if (!chart.tracks[this.options.src])
+        {
+            this.log(`Skipping translation as there is no track "${this.options.src}" to translate`);
+            return;
+        }
+
         let chartTrackNames = Translations.trackNames.filter(name =>
             name != this.options.src && (!(chart.tracks[name] && Object.keys(chart.tracks[name]).length) || this.options.overwrite)
         );
@@ -83,17 +88,30 @@ export class PluginAiTranslator extends AppPlugin
                     let time = parseInt(_time);
                     let trackTime = time + meas * resolution;
                     let elts = track[trackTime] = translateMeasure.track[time];
+                    let srcElts = trackSrc[trackTime];
+                    if (!srcElts)
+                        continue;
+
+                    let originalShortNote = srcElts.reduce((p, c) => c.type == "N" && p.type == "N" && c.touch < 5 && c.duration < p.duration ? c : p, {type: "N", duration: 99999});
+                    let maxDuration = originalShortNote.duration == 99999 ? 0 : originalShortNote.duration;
 
                     for (let elt of elts)
                     {
-                        let srcElts = chart.tracks[this.options.src][trackTime];
-                        if (!srcElts)
-                            continue;
-
-                        let originalElt: ChartNote = srcElts.find(e => e.type == "N" && e.type == elt.type && e.touch == elt.touch) as ChartNote;
-                        if (originalElt)
-                            (elt as ChartNote).duration = originalElt.duration;
+                        (elt as ChartNote).duration = maxDuration;
                     }
+                }
+            }
+
+            for (let _time in trackSrc)
+            {
+                let starPowerElt = trackSrc[_time].find(e => e.type == "S")
+                if (starPowerElt)
+                {
+                    let newElts = track[_time];
+                    if (newElts)
+                        newElts.unshift(starPowerElt);
+                    else
+                        track[_time] = [starPowerElt];
                 }
             }
         }
