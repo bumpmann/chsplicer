@@ -9,6 +9,7 @@ export class PluginSongScanner extends AppPlugin
     async load(options: any)
     {
         await super.load(options);
+        this.logger.logTimeDelta = false;
         if (!this.options.path)
             throw new Error("Plugin songScanner must have a parameter \"path\"");
         if ((typeof this.options.path) == "string")
@@ -46,7 +47,7 @@ export class PluginSongScanner extends AppPlugin
             }
             catch (e)
             {
-                console.warn("Skipping song due to failed loading: " + path);
+                this.logger.log("Skipping song due to failed loading: " + path);
                 return false;
             }
             for (let t of ["ExpertSingle", "HardSingle", "MediumSingle", "EasySingle"])
@@ -57,7 +58,7 @@ export class PluginSongScanner extends AppPlugin
         dirs = dirs.filter((val, index) => dirsFilters[index]);
 
         if (dirs.length > 200)
-            console.warn("/!\\ Scanned more than 200 songs. This will probably crash unless running node with option --max-old-space-size to allow more memory.");
+            this.logger.log("/!\\ Scanned more than 200 songs. This will probably crash unless running node with option --max-old-space-size to allow more memory.");
 
         obj.songs = Object.fromEntries(dirs.map((path, index) => [index, path]));
         obj.parts = dirs.map((path, index) => { return {song: index.toString(), quantize: 1}});

@@ -1,14 +1,16 @@
 {
-    "version": "1.1.0",
+    "version": "1.1.2",
+    "description": "Translate an existing song",
     "output": "{{1}}",
     "song": "{{1}}",
     "copy": true,
     "start_blank": 0,
     "ignoreAudio": true,
     "args": {
-        "1": {"resolve": true},
-        "method": {"default": "ai"},
-        "using": {"default": "gh+rb"}
+        "1": {"resolve": true, "type": "song", "typeScope": "local", "description": "Path of the chart in Songs folder"},
+        "method": {"default": "ai", "values": ["ai", "dictionary"], "description": "Use AI or dictionary"},
+        "using": {"default": "gh+rb", "description": "AI or dictionary name"},
+        "overwrite": {"default": false, "description": "Overwrite hard/medium/easy tracks"}
     },
     "plugins": [
         ["aiTranslator", {"if": "{{eq method 'ai'}}", "path": "translations/{{using}}", "overwrite": "{{overwrite}}"}],

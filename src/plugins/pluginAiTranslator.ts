@@ -140,7 +140,6 @@ export class PluginAiTranslator extends AppPlugin
             }
             catch (e)
             {
-                console.log(e)
                 throw new Error("Could not load " + _path.basename(`${bestModel.name}`));
             }
         }

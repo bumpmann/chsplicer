@@ -3,6 +3,7 @@ import * as _path from 'path';
 import * as needle from 'needle';
 import { Config } from './config';
 import { Downloader } from './downloader';
+import { Logger } from './logger';
 
 export class ChorusDownloader
 {
@@ -11,21 +12,23 @@ export class ChorusDownloader
 		let folderName = Downloader.sanitizeFilename(md5);
 		let destination = _path.join(Config.cache_path, folderName);
 
+		let logger = new Logger("chorusDownloader");
+
 		if (await fse.pathExists(destination + "/chorus.json"))
 		{
 			let resp = JSON.parse(await fse.readFile(destination + "/chorus.json", "utf-8"));
-			console.log(`Already downloaded: ${resp.songs[0].name} - ${resp.songs[0].artist} (${resp.songs[0].charter})`);
+			logger.log(`Already downloaded: ${resp.songs[0].name} - ${resp.songs[0].artist} (${resp.songs[0].charter})`);
 			return destination;
 		}
 
 		let resp = (await needle('get', 'https://chorus.fightthe.pw/api/search?query=md5%3D' + md5)).body;
 
 		let directLinks = resp.songs[0].directLinks;
-		console.log(`Downloading ${resp.songs[0].name} - ${resp.songs[0].artist} (${resp.songs[0].charter})`);
+		logger.log(`Downloading ${resp.songs[0].name} - ${resp.songs[0].artist} (${resp.songs[0].charter})`);
 		for (let linkType in directLinks)
 		{
 			if (linkType == 'archive' && (await fse.pathExists(destination)) && (await fse.readdir(destination)).length > 0)
-				console.log('Skipping download because archive is already extracted');
+				logger.log('Skipping download because archive is already extracted');
 			else
 				await Downloader.download(directLinks[linkType], linkType == 'archive', md5);
 		}

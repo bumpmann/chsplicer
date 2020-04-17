@@ -2,15 +2,13 @@ import * as needle from 'needle';
 import * as fse from 'fs-extra';
 import * as _path from 'path';
 import * as _url from 'url';
-import * as extract_zip from 'extract-zip';
+import * as extract from 'extract-zip';
 import { EventEmitter } from 'events';
 import { Config } from './config';
-import * as util from 'util';
 import { NeedleOptions } from 'needle';
+import { Logger } from './logger';
 const sanitize = require('sanitize-filename');
 const {unrar} = require('unrar-promise');
-
-const extract = util.promisify(extract_zip);
 
 export enum DownloadState {
 	waitingForResponse,
@@ -39,6 +37,8 @@ export class Downloader extends EventEmitter {
 	tempFolder: string
 	destination: string
 
+	logger: Logger
+
 	private req: NodeJS.ReadableStream
 
 	static async download(url: string, isArchive: boolean, folderid: string, retry = 10): Promise<Downloader>
@@ -50,7 +50,7 @@ export class Downloader extends EventEmitter {
 				return await new Promise((resolve, reject) => {
 					let dl = new Downloader(url, isArchive, folderid);
 					dl.on('error', err => reject(err || dl.errorMessage))
-						//.on('update', () => console.log(dl.state.toString()))
+						//.on('update', () => this.logger.log(dl.state.toString()))
 						.on('end', () => resolve(dl))
 						.start();
 				});
@@ -61,7 +61,7 @@ export class Downloader extends EventEmitter {
 					throw err;
 
 				let waittime = (maxtry - retry) * 5;
-				console.log('Will retry in ' + waittime + ' mins (still ' + retry + ' tries)');
+				(new Logger("downloader")).log('Will retry in ' + waittime + ' mins (still ' + retry + ' tries)');
 				await new Promise(resolve => setTimeout(resolve, waittime * 60000));
 			}
 		}
@@ -71,6 +71,8 @@ export class Downloader extends EventEmitter {
 	constructor(url: string, isArchive: boolean, folderName: string)
 	{
 		super();
+
+		this.logger = new Logger("downloader");
 
 		this.id = ++Downloader.lastID;
 		this.state = DownloadState.waitingForResponse;
@@ -109,16 +111,16 @@ export class Downloader extends EventEmitter {
 
 			this.fileType = headers['content-type'];
 			if (this.fileType.startsWith('text/html')) {
-				// console.log('REQUEST RETURNED HTML');
+				// this.logger.log('REQUEST RETURNED HTML');
 				this.handleHTMLResponse(headers['set-cookie']);
 				return;
 			}
 
-			// console.log(`REQUEST RETURNED FILE DOWNLOAD (x-goog-hash=[${headers['x-goog-hash']}])`);
+			// this.logger.log(`REQUEST RETURNED FILE DOWNLOAD (x-goog-hash=[${headers['x-goog-hash']}])`);
 			this.fileName = this.getDownloadFileName(this.url, headers);
 			if (fse.pathExistsSync(this.destination + "/" + this.fileName))
 			{
-				console.log("Skipping " + this.fileName + " download, because already been downloaded");
+				this.logger.log("Skipping " + this.fileName + " download, because already been downloaded");
 				this.cancelDownload();
 				this.updateState(DownloadState.finished);
 				this.emit('end');
@@ -139,11 +141,11 @@ export class Downloader extends EventEmitter {
 		this.req.on('done', async (err) => {
 			if (badResponseHTML.indexOf("but your computer or network may be sending automated queries. To protect our users, we can't process your request right now") != -1)
 			{
-				console.log("Too much requests to google drive. Please wait few minutes and retry");
+				this.logger.log("Too much requests to google drive. Please wait few minutes and retry");
 			}
 			else
 			{
-				console.log("Wrote html response in debug.html", err);
+				this.logger.log("Wrote html response in debug.html", err);
 				await fse.writeFile("debug.html", badResponseHTML, 'utf-8');
 			}
 			this.updateState(DownloadState.failedToRespond);
@@ -173,8 +175,8 @@ export class Downloader extends EventEmitter {
 			const confirmToken = confirmTokenResults[1];
 			const downloadID = this.url.substr(this.url.indexOf('id=') + 'id='.length);
 			this.url = `https://drive.google.com/uc?confirm=${confirmToken}&id=${downloadID}`;
-			// console.log(`NEW LINK: ${this.url}`);
-			// console.log(`COOKIE HEADER: [${cookieHeader}]`);
+			// this.logger.log(`NEW LINK: ${this.url}`);
+			// this.logger.log(`COOKIE HEADER: [${cookieHeader}]`);
 			this.start(cookieHeader);
 		});
 	}
@@ -193,13 +195,28 @@ export class Downloader extends EventEmitter {
 		this.req.on('end', async () => {
 			if (this.isArchive) {
 				this.updateState(DownloadState.extract);
-				await this.extractDownload();
+				try
+				{
+					await this.extractDownload();
+				}
+				catch (err) {
+					this.errorMessage = `Failed to extract the downloaded file: ${err}`;
+					this.updateState(DownloadState.extractFailed);
+					return;
+				}
 			}
 
-			if (this.state != DownloadState.extractFailed) {
-				this.updateState(DownloadState.transfer);
-				this.transferDownload();
+			this.updateState(DownloadState.transfer);
+			try {
+				await this.transferDownload();
+			} catch (err) {
+				this.errorMessage = `Copying the downloaded file to the target directory failed: ${err}`;
+				this.updateState(DownloadState.transferFailed);
+				return;
 			}
+
+			this.updateState(DownloadState.finished);
+			this.emit('end');
 		});
 	}
 
@@ -222,7 +239,7 @@ export class Downloader extends EventEmitter {
 		let filename = decodeURIComponent(_path.basename(_url.parse(this.url).pathname || ""));
 		if (!filename)
 		{
-			console.log(`Warning: couldn't find suitable filename`);
+			this.logger.log(`Warning: couldn't find suitable filename`);
 			return 'unknownFilename' + ext;
 		}
 
@@ -236,48 +253,33 @@ export class Downloader extends EventEmitter {
 	{
 		const source = _path.join(this.tempFolder, this.fileName);
 
-		try
-		{
-			if (_path.extname(this.fileName).toLowerCase() == ".rar")
-				await unrar(source, this.tempFolder);
-			else
-				await extract(source, { dir: this.tempFolder });
-			await fse.unlink(source);
-		}
-		catch (err) {
-			this.errorMessage = `Failed to extract the downloaded file: ${err}`;
-			this.updateState(DownloadState.extractFailed);
-		}
+		if (_path.extname(this.fileName).toLowerCase() == ".rar")
+			await unrar(source, this.tempFolder);
+		else
+			await extract(source, { dir: this.tempFolder });
+		await fse.unlink(source);
 	}
 
 	private async transferDownload() {
-		try {
-			await fse.ensureDir(this.destination);
+		await fse.ensureDir(this.destination);
 
-			let files = (this.isArchive ? await fse.readdir(this.tempFolder) : [this.fileName]);
+		let files = (this.isArchive ? await fse.readdir(this.tempFolder) : [this.fileName]);
 
-			// If the chart folder is in the archive folder, rather than the chart files
-			const isFolderArchive = (files.length < 2 && !fse.lstatSync(_path.join(this.tempFolder, files[0])).isFile());
-			if (this.isArchive && isFolderArchive) {
-				this.tempFolder = _path.join(this.tempFolder, files[0]);
-				files = await fse.readdir(this.tempFolder);
-			}
+		// If the chart folder is in the archive folder, rather than the chart files
+		const isFolderArchive = (files.length < 2 && !fse.lstatSync(_path.join(this.tempFolder, files[0])).isFile());
+		if (this.isArchive && isFolderArchive) {
+			this.tempFolder = _path.join(this.tempFolder, files[0]);
+			files = await fse.readdir(this.tempFolder);
+		}
 
-			// Copy the files from the temporary directory to the destination
-			for (const file of files) {
-				await fse.move(_path.join(this.tempFolder, file), _path.join(this.destination, file));
-			}
+		// Copy the files from the temporary directory to the destination
+		for (const file of files) {
+			await fse.move(_path.join(this.tempFolder, file), _path.join(this.destination, file));
+		}
 
-			// Delete the extracted folder from the temporary directory
-			if (isFolderArchive) {
-				await fse.rmdir(this.tempFolder);
-			}
-
-			this.updateState(DownloadState.finished);
-			this.emit('end');
-		} catch (err) {
-			this.errorMessage = `Copying the downloaded file to the target directory failed: ${err}`;
-			this.updateState(DownloadState.transferFailed);
+		// Delete the extracted folder from the temporary directory
+		if (isFolderArchive) {
+			await fse.rmdir(this.tempFolder);
 		}
 	}
 
@@ -290,7 +292,7 @@ export class Downloader extends EventEmitter {
 			anyreq.destroy();
 		else
 		{
-			console.warn("Could not abort request, no suitable method found");
+			this.logger.log("Could not abort request, no suitable method found");
 		}
 	}
 

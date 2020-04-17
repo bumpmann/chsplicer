@@ -8,7 +8,6 @@ import { Layout } from './layout';
 import { Audio } from './audio';
 import { AudioVoice } from "./audioVoice";
 import { AppPlugin } from './appPlugin';
-import { LayoutOptions } from './layoutOptions';
 import { Logger } from './logger';
 
 export class Splicer
@@ -30,7 +29,6 @@ export class Splicer
         configName = this.args[0] = configName.substr(0, configName.length - 5);
 
         this.logger = new Logger(configName);
-        this.logger.logTimeDelta = false;
 
         let cwdConfig = Config.resolvePath(config, '.', this.args);
         if (await fse.pathExists(cwdConfig))
@@ -53,7 +51,6 @@ export class Splicer
                 await new Splicer().run(required.path, required.args || {});
             }
         });
-
 
 
         this.output = this.layout.output;

@@ -14,6 +14,7 @@ import { PluginNoteLimiter } from './plugins/pluginNoteLimiter';
 import { PluginSongScanner } from './plugins/pluginSongScanner';
 import { PluginDictionaryBuilder } from './plugins/pluginDictionaryBuilder';
 import { PluginDictionaryTranslator } from './plugins/pluginDictionaryTranslator';
+import { PluginWeb } from './plugins/pluginWeb';
 
 AppPlugin.register("trackCopy", PluginTrackCopy);
 AppPlugin.register("aiTranslator", PluginAiTranslator);
@@ -22,7 +23,7 @@ AppPlugin.register("dictionaryTranslator", PluginDictionaryTranslator);
 AppPlugin.register("dictionaryBuilder", PluginDictionaryBuilder);
 AppPlugin.register("noteLimiter", PluginNoteLimiter);
 AppPlugin.register("songScanner", PluginSongScanner);
-
+AppPlugin.register("web", PluginWeb);
 
 async function run(args: any)
 {

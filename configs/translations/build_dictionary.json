@@ -1,6 +1,6 @@
 {
-    "version": "1.1.0",
-    "name": "build a translation dictionary from the local songs",
+    "version": "1.1.2",
+    "description": "Build a translation dictionary from the local songs",
     "infos": {
         "album": "",
         "genre": "",

@@ -1,0 +1,9 @@
+{
+    "version": "1.1.2",
+    "description": "Run a web server to run configs",
+    "args": {
+        "host": {"default": "127.0.0.1", "description": "Hostname or ip"},
+        "port": {"default": "7676", "description": "Listening port"}
+    },
+    "plugin": ["web", {"host": "{{host}}", "port": "{{port}}"}]
+}

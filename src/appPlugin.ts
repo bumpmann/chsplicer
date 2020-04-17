@@ -16,6 +16,7 @@ export abstract class AppPlugin
     {
         this.options = options;
         this.logger = new Logger(this.options.pluginName);
+        this.logger.logTimeDelta = true;
     }
 
     log(...args:any[])

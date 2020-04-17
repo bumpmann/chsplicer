@@ -1,6 +1,6 @@
 {
-    "version": "1.1.0",
-    "name": "train a neural net AI from a dictionary",
+    "version": "1.1.2",
+    "description": "Train a neural net AI from a dictionary",
     "infos": {
         "album": "",
         "genre": "",

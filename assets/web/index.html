@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+<head>
+	<title>CH tools</title>
+	<link rel="icon" type="image/png" href="img/favicon.png" />
+	<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+</head>
+<body>
+	<header class="mdc-top-app-bar app-bar" id="app-bar">
+		<div class="mdc-top-app-bar__row">
+			<section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+				<span class="mdc-top-app-bar__title">Clone hero tools</span>
+			</section>
+		</div>
+	</header>
+
+	<div class="mdc-drawer-app-content mdc-top-app-bar--fixed-adjust">
+		<main class="main-content" id="main-content">
+			<div class="mdc-layout-grid">
+				<div class="mdc-layout-grid__inner">
+					<div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-9">
+						<div id="config-card" class="mdc-layout-grid__inner" style="display: none;">
+							<div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+								<div class="mdc-card">
+									<h2></h2>
+									<div id="config-description" style="display: none;"></div>
+									<div class="card-content">
+										<div id="config">
+											<div id="config-params"></div>
+											<button id="button-run" class="mdc-button mdc-button--raised">
+												<span class="mdc-button__label">Run</span>
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="mdc-layout-grid__inner">
+							<div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+								<div class="mdc-card">
+									<h2>Logs</h2>
+									<div class="card-content">
+										<div class="window">
+											<div id="messages" class="terminal">
+
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-3">
+						<div class="mdc-card">
+							<h2>Configurations</h2>
+							<div class="card-content">
+								<ul class="mdc-list" id="configs"></ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div id="dialog-chorus" class="mdc-dialog">
+				<div class="mdc-dialog__container">
+				  <div class="mdc-dialog__surface"
+					role="alertdialog"
+					aria-modal="true"
+					aria-labelledby="my-dialog-title"
+					aria-describedby="my-dialog-content">
+					<h2 class="mdc-dialog__title" id="my-dialog-title">Chorus search</h2>
+					<div class="mdc-dialog__content" id="my-dialog-content">
+						<div class="config-arg">
+							<div class="mdc-layout-grid">
+								<div class="mdc-layout-grid__inner">
+									<div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-1" style="text-align: center"><img src="img/chorus.png" style="margin-top: 12px"></div>
+									<div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-10">
+										<div class="mdc-text-field mdc-text-field--outlined">
+											<input class="mdc-text-field__input" type="text" aria-label="">
+											<button class="mdc-button mdc-button--unelevated button-shaped button-search"><span class="mdc-button__label">Search</span></button>
+											<div class="mdc-notched-outline">
+												<div class="mdc-notched-outline__leading"></div>
+												<div class="mdc-notched-outline__notch">
+												</div>
+												<div class="mdc-notched-outline__trailing"></div>
+											</div>
+										</div>
+									</div>
+									<div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-1" style="text-align: center"><div id="chorus-randomizer"><strong>Randomizer!</strong></div></div>
+								</div>
+								<div class="mdc-layout-grid__inner">
+									<div class="chorus-results mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<footer class="mdc-dialog__actions">
+					  <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised" data-mdc-dialog-action="cancel">
+						<div class="mdc-button__ripple"></div>
+						<span class="mdc-button__label">Cancel</span>
+					  </button>
+					</footer>
+				  </div>
+				</div>
+				<div class="mdc-dialog__scrim"></div>
+			  </div>
+		</main>
+	</div>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+	<script src="js/inputs.js"></script>
+	<script src="js/song-inputs.js"></script>
+	<script src="js/app.js"></script>
+	<script src="js/main.js"></script>
+</body>
+</html>

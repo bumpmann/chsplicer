@@ -8,6 +8,7 @@ import { ChorusDownloader } from "./chorusDownloader"
 import { CachedDownloader } from './cachedDownloader'
 import { AppPlugin } from './appPlugin'
 import { LayoutOptions } from './layoutOptions'
+import { Logger } from './logger'
 
 export class LayoutSong
 {
@@ -74,6 +75,7 @@ export class Layout
 
     private static async load(obj: any, args: any, cwd: string, requireCallback: (require: LayoutRequire[]) => Promise<void>)
     {
+        let logger = new Logger("loader");
         let layout = new Layout();
         obj.infos = obj.infos || {};
         if (!obj.songs)
@@ -102,6 +104,13 @@ export class Layout
                 let arg = obj.args[argName];
                 if (arg.resolve)
                     args[argName] = Config.resolvePath(args[argName], arg.resolve === true ? "." : arg.resolve, args);
+                if (!arg.type)
+                {
+                    if (arg.values)
+                        arg.type = typeof arg.values[0];
+                    else if (arg.default != undefined)
+                        arg.type = typeof arg.default;
+                }
             }
         }
 
@@ -135,7 +144,7 @@ export class Layout
             let pluginInstance = await AppPlugin.instanciate(calls[0], calls[1], args);
             if (pluginInstance.enabled && pluginInstance.layoutPass)
             {
-                console.log(`Applying plugin layout:${calls[0]}...`);
+                logger.log(`Applying plugin layout:${calls[0]}...`);
                 await pluginInstance.layoutPass(obj, layout.options);
             }
         }
@@ -154,7 +163,7 @@ export class Layout
         if (obj.ignoreAudio)
             layout.options.ignoreAudio = true;
 
-        console.log("Loading songs...");
+        logger.log("Loading songs...");
         for (let [index, objsong] of obj.songs.entries())
         {
             let song = new LayoutSong();
@@ -231,7 +240,7 @@ export class Layout
         }
         catch(e)
         {
-            console.warn("Could not find song.ini, using an empty base.");
+            logger.log("Could not find song.ini, using an empty base.");
             layout.ini = {song:{}};
         }
         if (layout.ini.Song)

@@ -245,13 +245,14 @@ export class PluginAiTrainer extends AppPlugin
     {
         const saveEachIterations = 10;
 
-        console.log("-----------------------------------");
-        console.log("The neural net will start training.");
-        console.log(`This will save each ${saveEachIterations} iterations.`);
-        console.log("For a good learning, the error rate");
-        console.log("should be around 2.");
-        console.log("Press Ctrl+C to stop training and exit");
-        console.log("-----------------------------------");
+        this.logger.logTimeDelta = false;
+        this.logger.log("-----------------------------------");
+        this.logger.log("The neural net will start training.");
+        this.logger.log(`This will save each ${saveEachIterations} iterations.`);
+        this.logger.log("For a good learning, the error rate");
+        this.logger.log("should be around 2.");
+        this.logger.log("Press Ctrl+C to stop training and exit");
+        this.logger.log("-----------------------------------");
 
         const multibar = new cliProgress.MultiBar({
             hideCursor: true,
@@ -286,7 +287,7 @@ export class PluginAiTrainer extends AppPlugin
                 let worker = cluster.fork();
                 worker.on("online", callWorker);
                 worker.on("message", async msg => {
-                    //console.log("msg", msg);
+                    //this.logger.log("msg", msg);
                     if (!msg)
                         return;
                     if (msg.state)
@@ -423,7 +424,7 @@ export class PluginAiTrainer extends AppPlugin
 
         // Expand translations
         //translations.expandTranslations();
-        //console.log(translations[6].minTouch, translations[6].maxTouch, translations[6].match, translations[6].best);
+        //this.logger.log(translations[6].minTouch, translations[6].maxTouch, translations[6].match, translations[6].best);
         //this.log("Factorized translations");
 
         // Sort translations and pretendants by occurences desc, compute translation max/min touch

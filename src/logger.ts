@@ -1,10 +1,13 @@
+type loggerFunction = (message?: any, ...optionalParams: any[]) => void;
+
 export class Logger
 {
+    static logger: null | loggerFunction = null
     private tag: string
     private timeStart: Date
     private timeLast: Date
 
-    logTimeDelta: boolean = true;
+    logTimeDelta: boolean = false;
 
     constructor(tag: string)
     {
@@ -30,6 +33,9 @@ export class Logger
         if (timeDiff)
             log += ` (+${timeDiff}ms)`
 
-        console.log(log, ...args);
+        if (Logger.logger)
+            Logger.logger(log, ...args);
+        else
+            console.log(log, ...args);
     }
 }
